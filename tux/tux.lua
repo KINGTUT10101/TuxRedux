@@ -12,7 +12,12 @@ local tux = {
         position = {}, -- Position in the grid
     }, -- Contains data used by the layout system
     comp = {}, -- Contains the registered UI components
-    detectedThisFrame = false, -- Tracks if the mouse was over a UI item in the current frame
+    cursor = {
+        x = 0,
+        y = 0,
+        isDown = false,
+        detectedThisFrame = false
+    },
 
     defaultFont = nil,
     defaultColors = {
@@ -86,8 +91,20 @@ function tux.core.unpackCoords (tbl)
     return tbl.x, tbl.y, tbl.w, tbl.h
 end
 
-function tux.core.getMouseState ()
+function tux.core.getState (x, y, w, h)
+    local mx, my = tux.cursor.x, tux.cursor.y
 
+    -- Check if cursor is in bounds
+    if x <= mx and mx <= x + w and y <= my and my <= h then
+        -- Check if cursor is down
+        if tux.cursor.isDown == true then
+            return "hit"
+        else
+            return "hover"
+        end
+    else
+        return "normal"
+    end
 end
 
 function tux.core.rect (slices, colors, state, x, y, w, h)
@@ -119,6 +136,21 @@ end
     CALLBACKS
 ============]]
 
+-- This should run BEFORE you show any UI items
+function tux.callbacks.update (dt, mx, my, isDown)
+    if mx == nil or my == nil then
+        tux.cursor.x, tux.cursor.y = love.cursor.getPosition ()
+    else
+        tux.cursor.x, tux.cursor.y = mx, my
+    end
+    if isDown == nil then
+        tux.cursor.isDown = love.cursor.isDown ()
+    else
+        tux.cursor.isDown = isDown
+    end
+    tux.cursor.detectedThisFrame = false
+end
+
 function tux.callbacks.draw ()
     local origFont = love.graphics.getFont ()
     local queue = tux.renderQueue
@@ -127,8 +159,6 @@ function tux.callbacks.draw ()
         queue[i] = nil
     end
     love.graphics.setFont (origFont)
-
-    tux.detectedThisFrame = false
 end
 
 --[[==========
