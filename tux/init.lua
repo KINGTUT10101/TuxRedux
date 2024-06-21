@@ -5,5 +5,6 @@ local tux = require (libPath .. "tux")
 
 -- Load and register the default UI components
 tux.utils.registerComponent (require (libPath .. "components.button"), false)
+tux.utils.registerComponent (require (libPath .. "components.label"), false)
 
 return tux

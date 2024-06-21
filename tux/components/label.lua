@@ -1,5 +1,5 @@
 local component = {
-    id = "button",
+    id = "label",
 }
 
 function component.init (tux, opt)
@@ -9,7 +9,7 @@ function component.init (tux, opt)
 end
 
 function component.draw (tux, opt)
-    -- Code for rendering the button goes here
+    tux.core.rect (opt.slices, opt.colors, "normal", tux.core.unpackCoords (opt))
 end
 
 return component
