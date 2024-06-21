@@ -2,10 +2,10 @@ local component = {
     id = "label",
 }
 
+function component.preInit () end
+
 function component.init (tux, opt)
     -- Modify and initialize the options table here as needed
-
-    return opt
 end
 
 function component.draw (tux, opt)

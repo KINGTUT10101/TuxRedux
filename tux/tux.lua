@@ -150,15 +150,20 @@ function tux.utils.registerComponent (component, override)
             assert (type (opt) == "table", "Attempt to use a non-table value for UI item options")
             opt.x, opt.y, opt.w, opt.h = x, y, w, h
 
+            newComp.preInit (tux, opt)
+
+            -- Determine state
+            -- TODO: set mouse position and determine which component was clicked
             opt.state = "normal"
 
-            -- TODO: set mouse position and determine which component was clicked
+            local returnVal = newComp.init (tux, opt)
 
-            -- Run the item's init function
             tux.renderQueue[#tux.renderQueue + 1] = {
-                opt = newComp.init (tux, opt),
+                opt = opt,
                 draw = newComp.draw,
             }
+
+            return returnVal
         end
 
         tux.comp[component.id] = newComp
