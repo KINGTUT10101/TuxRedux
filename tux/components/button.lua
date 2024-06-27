@@ -3,13 +3,14 @@ local component = {
 }
 
 function component.init (tux, opt)
-    -- Modify and initialize the options table here as needed
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt))
 
-    return opt
+    return opt.state
 end
 
 function component.draw (tux, opt)
     -- Code for rendering the button goes here
+    tux.core.rect (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
 end
 
 return component

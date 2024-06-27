@@ -91,20 +91,24 @@ function tux.core.unpackCoords (tbl)
     return tbl.x, tbl.y, tbl.w, tbl.h
 end
 
-function tux.core.getState (x, y, w, h)
-    local mx, my = tux.cursor.x, tux.cursor.y
+function tux.core.registerHitbox (x, y, w, h)
+    if tux.cursor.detectedThisFrame == false then
+        local mx, my = tux.cursor.x, tux.cursor.y
 
-    -- Check if cursor is in bounds
-    if x <= mx and mx <= x + w and y <= my and my <= h then
-        -- Check if cursor is down
-        if tux.cursor.isDown == true then
-            return "hit"
-        else
-            return "hover"
+        -- Check if cursor is in bounds
+        if x <= mx and mx <= x + w and y <= my and my <= y + h then
+            tux.cursor.detectedThisFrame = true
+            
+            -- Check if cursor is down
+            if tux.cursor.isDown == true then
+                return "hit"
+            else
+                return "hover"
+            end
         end
-    else
-        return "normal"
     end
+
+    return "normal"
 end
 
 function tux.core.rect (slices, colors, state, x, y, w, h)
@@ -118,6 +122,77 @@ function tux.core.rect (slices, colors, state, x, y, w, h)
     else
         tux.defaultSlices[state]:draw (x, y, w, h)
     end
+end
+
+function tux.core.setFont (font)
+    love.graphics.setFont (font or tux.defaultFont)
+end
+
+function tux.core.print (text, align, valign, padding, font, colors, state, x, y, w, h)
+    text = text or ""
+    padding = padding or {}
+    font = font or love.graphics.getFont()
+	
+    tux.core.setFont (font)
+	local offsetY
+	local padEdgeX, padEdgeY = padding.edgeX or 0, padding.edgeY or 0
+
+	x = x + padEdgeX
+	y = y + padEdgeY
+	w = w - (2 * padEdgeX)
+	h = h - (2 * padEdgeY)
+
+	local _, wrappedText = font:getWrap(text, w)
+	local fontH = font:getHeight()
+	local textH = fontH * #wrappedText
+
+	if textH > h then
+		text = ""
+		textH = fontH * math.floor (h / fontH)
+		for i = 1, math.floor (h / fontH) do
+			text = text .. wrappedText[i] .. "\n"
+		end
+	end
+
+    if valign == "top" then
+        offsetY = padEdgeY
+    elseif valign == "bottom" then
+        offsetY = h - textH - padEdgeY
+    else
+        offsetY = h / 2 - textH / 2
+    end
+    
+    tux.core.setColorForState (colors, "fg", state)
+    love.graphics.printf (text, x, y + offsetY, w, align or "center")
+end
+
+function tux.core.drawImage (image, scale, align, valign, padding, x, y, w, h)
+	if image ~= nil then
+		local offsetX, offsetY
+		local padEdgeX, padEdgeY = padding.padEdgeX or 0, padding.padEdgeY or 0
+		local iw, ih = image:getDimensions ()
+		iw = iw * (scale or 1)
+		ih = ih * (scale or 1)
+
+		-- Images will render on the opposite side of the text
+		if valign == "bottom" then
+			offsetY = padEdgeY
+		elseif valign == "top" then
+			offsetY = h - ih - padEdgeY
+		else
+			offsetY = h / 2 - ih / 2
+		end
+
+		if align == "right" then
+			offsetX = padEdgeX
+		elseif align == "left" then
+			offsetX = w - iw - padEdgeX
+		else
+			offsetX = w / 2 - iw / 2
+		end
+		
+		love.graphics.draw (image, x + offsetX, y + offsetY, nil, scale, scale)
+	end
 end
 
 function tux.core.setColorForState (colors, colorType, state)
@@ -139,12 +214,12 @@ end
 -- This should run BEFORE you show any UI items
 function tux.callbacks.update (dt, mx, my, isDown)
     if mx == nil or my == nil then
-        tux.cursor.x, tux.cursor.y = love.cursor.getPosition ()
+        tux.cursor.x, tux.cursor.y = love.mouse.getPosition ()
     else
         tux.cursor.x, tux.cursor.y = mx, my
     end
     if isDown == nil then
-        tux.cursor.isDown = love.cursor.isDown ()
+        tux.cursor.isDown = love.mouse.isDown (1)
     else
         tux.cursor.isDown = isDown
     end
@@ -179,12 +254,6 @@ function tux.utils.registerComponent (component, override)
             opt = opt or {}
             assert (type (opt) == "table", "Attempt to use a non-table value for UI item options")
             opt.x, opt.y, opt.w, opt.h = x, y, w, h
-
-            newComp.preInit (tux, opt)
-
-            -- Determine state
-            -- TODO: set mouse position and determine which component was clicked
-            opt.state = "normal"
 
             local returnVal = newComp.init (tux, opt)
 
@@ -228,8 +297,24 @@ function tux.utils.setDefaultSlices (slices)
     tux.defaultSlices = copyTable (slices)
 end
 
+function tux.utils.setDefaultFont (font)
+    tux.defaultFont = font
+end
+
+function tux.utils.getDefaultFont ()
+    return tux.defaultFont
+end
+
 --[[==========
     LAYOUT
 ============]]
+
+function tux.layout.pushOrigin (x, y, w, h)
+
+end
+
+function tux.layout.popOrigin ()
+
+end
 
 return tux

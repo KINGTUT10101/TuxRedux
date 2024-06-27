@@ -2,14 +2,15 @@ local component = {
     id = "label",
 }
 
-function component.preInit () end
-
 function component.init (tux, opt)
-    -- Modify and initialize the options table here as needed
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt))
+
+    return opt.state
 end
 
 function component.draw (tux, opt)
     tux.core.rect (opt.slices, opt.colors, "normal", tux.core.unpackCoords (opt))
+    tux.core.print (opt.text, opt.align, opt.valign, opt.padding, opt.font, opt.colors, "normal", tux.core.unpackCoords (opt))
 end
 
 return component
