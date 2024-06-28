@@ -120,18 +120,17 @@ function tux.core.registerHitbox (x, y, w, h)
             if tux.cursor.isDown == true then
                 tux.cursor.pressedThisFrame = true
                 
-                -- Determine the current click state
-                if tux.cursor.wasDown ~= tux.cursor.isDown then
-                    if tux.cursor.isDown == true then
-                        return "start"
-                    else
-                        return "end"
-                    end
+                if tux.cursor.wasDown == false then
+                    return "start"
                 else
                     return "held"
                 end
             else
-                return "hover"
+                if tux.cursor.wasDown == true then
+                    return "end"
+                else
+                    return "hover"
+                end
             end
         end
     end
@@ -151,12 +150,28 @@ function tux.core.rect (slices, colors, state, x, y, w, h)
     else
         tux.defaultSlices[state]:draw (x, y, w, h)
     end
+
+    tux.core.debugBoundary (state, x, y, w, h)
+end
+
+function tux.core.debugBoundary (state, x, y, w, h)
+    if tux.debugMode == true then
+        if state == "normal" then
+            love.graphics.setColor (1, 1, 1, 1)
+        elseif state == "hover" then
+            love.graphics.setColor (1, 1, 0, 1)
+        else
+            love.graphics.setColor (1, 0, 0, 1)
+        end
+        love.graphics.rectangle ("line", x, y, w, h)
+    end
 end
 
 function tux.core.setFont (font)
     love.graphics.setFont (font or tux.defaultFont)
 end
 
+-- TODO: Update the padding system to use the one from the original tux
 function tux.core.print (text, align, valign, padding, font, colors, state, x, y, w, h)
     text = text or ""
     padding = padding or {}
@@ -384,7 +399,7 @@ end
 ============]]
 
 function tux.layout.pushOrigin (x, y, w, h)
-
+    
 end
 
 function tux.layout.popOrigin ()
