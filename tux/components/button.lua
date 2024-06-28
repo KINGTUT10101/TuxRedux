@@ -9,8 +9,9 @@ function component.init (tux, opt)
 end
 
 function component.draw (tux, opt)
-    -- Code for rendering the button goes here
     tux.core.rect (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
+    tux.core.drawImage (opt.image, opt.scale, opt.align, opt.valign, opt.padding, tux.core.unpackCoords (opt))
+    tux.core.print (opt.text, opt.align, opt.valign, opt.padding, opt.font, opt.colors, "normal", tux.core.unpackCoords (opt))
 end
 
 return component

@@ -15,8 +15,12 @@ local tux = {
     cursor = {
         x = 0,
         y = 0,
+        lockedX = 0,
+        lockedY = 0,
         isDown = false,
-        detectedThisFrame = false
+        wasDown = false,
+        hoveredThisFrame = false,
+        pressedThisFrame = false,
     },
 
     defaultFont = nil,
@@ -29,7 +33,7 @@ local tux = {
             fg = {0, 0, 0, 1},
             bg = {0.75, 0.75, 0.75, 1},
         },
-        hit = {
+        held = {
             fg = {0, 0, 0, 1},
             bg = {0.25, 0.25, 0.25, 1},
         },
@@ -37,7 +41,7 @@ local tux = {
     defaultSlices = {
         normal = defaultSlice,
         hover = defaultSlice,
-        hit = defaultSlice,
+        held = defaultSlice,
     }, -- Default slices for buttons
 
     core = {}, -- Internal functions not meant for outside use
@@ -91,17 +95,40 @@ function tux.core.unpackCoords (tbl)
     return tbl.x, tbl.y, tbl.w, tbl.h
 end
 
+function tux.core.getCursorPosition ()
+    return tux.core.x, tux.core.y
+end
+
+function tux.core.getLockedCursorPosition ()
+    return tux.core.lockedX, tux.core.lockedY
+end
+
+function tux.core.getRelativePosition (x, y, rx, ry)
+    return rx - x, ry - y
+end
+
 function tux.core.registerHitbox (x, y, w, h)
-    if tux.cursor.detectedThisFrame == false then
-        local mx, my = tux.cursor.x, tux.cursor.y
+    if tux.cursor.hoveredThisFrame == false then
+        local mx, my = tux.cursor.lockedX, tux.cursor.lockedY
 
         -- Check if cursor is in bounds
         if x <= mx and mx <= x + w and y <= my and my <= y + h then
-            tux.cursor.detectedThisFrame = true
+            tux.cursor.hoveredThisFrame = true
             
             -- Check if cursor is down
             if tux.cursor.isDown == true then
-                return "hit"
+                tux.cursor.pressedThisFrame = true
+                
+                -- Determine the current click state
+                if tux.cursor.wasDown ~= tux.cursor.isDown then
+                    if tux.cursor.isDown == true then
+                        return "start"
+                    else
+                        return "end"
+                    end
+                else
+                    return "held"
+                end
             else
                 return "hover"
             end
@@ -112,6 +139,7 @@ function tux.core.registerHitbox (x, y, w, h)
 end
 
 function tux.core.rect (slices, colors, state, x, y, w, h)
+    state = tux.core.getRenderState (state)
     tux.core.setColorForState (colors, "bg", state)
 
     -- Provided slices
@@ -196,6 +224,7 @@ function tux.core.drawImage (image, scale, align, valign, padding, x, y, w, h)
 end
 
 function tux.core.setColorForState (colors, colorType, state)
+    state = tux.core.getRenderState (state)
     if colors ~= nil then
         if type (colors[1]) == "number" then
             love.graphics.setColor (colors)
@@ -207,23 +236,46 @@ function tux.core.setColorForState (colors, colorType, state)
     end
 end
 
+local renderStateLookup = {
+    normal = "normal",
+    hover = "hover",
+    held = "held",
+    start = "held",
+    ["end"] = "held",
+}
+function tux.core.getRenderState (state)
+    return renderStateLookup[state]
+end
+
 --[[==========
     CALLBACKS
 ============]]
 
 -- This should run BEFORE you show any UI items
 function tux.callbacks.update (dt, mx, my, isDown)
-    if mx == nil or my == nil then
-        tux.cursor.x, tux.cursor.y = love.mouse.getPosition ()
-    else
-        tux.cursor.x, tux.cursor.y = mx, my
-    end
+    tux.cursor.wasDown = tux.cursor.isDown
+
     if isDown == nil then
         tux.cursor.isDown = love.mouse.isDown (1)
     else
         tux.cursor.isDown = isDown
     end
-    tux.cursor.detectedThisFrame = false
+
+    if mx == nil or my == nil then
+        tux.cursor.x, tux.cursor.y = love.mouse.getPosition ()
+    else
+        tux.cursor.x, tux.cursor.y = mx, my
+    end
+
+    -- Only update locked cursor position if the mouse isn't held down
+    if tux.cursor.isDown == false then
+        tux.cursor.lockedX = tux.cursor.x
+        tux.cursor.lockedY = tux.cursor.y
+    end
+
+    -- Reset flags
+    tux.cursor.hoveredThisFrame = false
+    tux.cursor.pressedThisFrame = false
 end
 
 function tux.callbacks.draw ()
@@ -267,6 +319,18 @@ function tux.utils.registerComponent (component, override)
 
         tux.comp[component.id] = newComp
     end
+end
+
+-- Returns true if a UI item was clicked yet in the current frame
+-- It's best to use this AFTER all of your UI items have been shown
+function tux.utils.itemClicked ()
+    return tux.cursor.pressedThisFrame
+end
+
+-- Returns true if a UI item was hoevered over yet in the current frame
+-- It's best to use this AFTER all of your UI items have been shown
+function tux.utils.itemHovered ()
+    return tux.cursor.hoveredThisFrame
 end
 
 function tux.utils.removeComponent (id)

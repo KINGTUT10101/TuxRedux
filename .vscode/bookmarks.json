@@ -1,0 +1,39 @@
+{
+	"files": [
+		{
+			"path": "tux/tux.lua",
+			"bookmarks": [
+				{
+					"line": 5,
+					"column": 0,
+					"label": "Tux table"
+				},
+				{
+					"line": 67,
+					"column": 0,
+					"label": "Helper functions"
+				},
+				{
+					"line": 90,
+					"column": 0,
+					"label": "Core methods"
+				},
+				{
+					"line": 250,
+					"column": 0,
+					"label": "Callback functions"
+				},
+				{
+					"line": 291,
+					"column": 0,
+					"label": "Utility methods"
+				},
+				{
+					"line": 372,
+					"column": 0,
+					"label": "Layout methods"
+				}
+			]
+		}
+	]
+}
