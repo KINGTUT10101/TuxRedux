@@ -9,7 +9,7 @@ function component.init (tux, opt)
 end
 
 function component.draw (tux, opt)
-    if opt.debug == true then
+    if tux.utils.getDebugMode () == true then
         love.graphics.setColor (0.25, 0.25, 0.25, 0.5)
         love.graphics.rectangle ("fill", tux.core.unpackCoords (opt))
 

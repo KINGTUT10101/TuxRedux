@@ -22,6 +22,7 @@ local tux = {
         hoveredThisFrame = false,
         pressedThisFrame = false,
     },
+    debugMode = false,
 
     defaultFont = nil,
     defaultColors = {
@@ -361,12 +362,21 @@ function tux.utils.setDefaultSlices (slices)
     tux.defaultSlices = copyTable (slices)
 end
 
+function tux.utils.getDefaultFont ()
+    return tux.defaultFont
+end
+
 function tux.utils.setDefaultFont (font)
     tux.defaultFont = font
 end
 
-function tux.utils.getDefaultFont ()
-    return tux.defaultFont
+function tux.utils.getDebugMode ()
+    return tux.debugMode
+end
+
+function tux.utils.setDebugMode (mode)
+    assert (type (mode) == "boolean", "Provided debug mode is not a boolean value")
+    tux.debugMode = mode
 end
 
 --[[==========

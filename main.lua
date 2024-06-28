@@ -11,17 +11,24 @@ function love.update (dt)
         print ("start")
     end
 
-    tux.show.noClickZone ({debug = true}, 550, 100, 100, 100)
+    tux.show.noClickZone (nil, 550, 100, 100, 100)
     if tux.show.button (nil, 600, 150, 100, 200) == "held" then
         print ("held")
+    end
+
+    if tux.show.button ({text="Debug mode"}, 25, 525, 50, 50) == "start" then
+        tux.utils.setDebugMode (not tux.utils.getDebugMode ())
     end
 end
 
 function love.draw ()
     tux.callbacks.draw ()
 
-    -- Print cursor coordinates
+    -- Prints the cursor coordinates
     local mx, my = love.mouse.getPosition ()
     love.graphics.setColor (1, 1, 1, 1)
-    love.graphics.print (mx .. ", " .. my, 725, 25)
+    love.graphics.print (mx .. ", " .. my, 700, 25)
+
+    -- Prints the current debug mode
+    love.graphics.print ("Debug: " .. tostring (tux.utils.getDebugMode ()), 700, 50)
 end
