@@ -24,7 +24,7 @@ function love.update (dt)
         tux.utils.setDebugMode (not tux.utils.getDebugMode ())
     end
     
-    tux.show.checkbox ({data = checkboxData, mark = "cross"}, 500, 25, 100, 50)
+    tux.show.checkbox ({data = checkboxData, mark = "cross", trueHitbox = false}, 500, 25, 100, 50)
 end
 
 function love.draw ()

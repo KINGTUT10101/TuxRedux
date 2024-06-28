@@ -8,8 +8,12 @@ function component.init (tux, opt)
     opt.size = math.min (opt.w, opt.h)
     opt.cx = opt.x + (opt.w / 2) - (opt.size / 2)
     opt.cy = opt.y + (opt.h / 2) - (opt.size / 2)
-
-    opt.state = tux.core.registerHitbox (opt.cx, opt.cy, opt.size, opt.size)
+    
+    if opt.trueHitbox == false then
+        opt.state = tux.core.registerHitbox (opt.cx, opt.cy, opt.size, opt.size)
+    else
+        opt.state = tux.core.registerHitbox (opt.x, opt.y, opt.w, opt.h)
+    end
 
     if opt.state == "end" then
         opt.data.checked = not opt.data.checked
