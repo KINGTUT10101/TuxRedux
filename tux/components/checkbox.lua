@@ -8,12 +8,8 @@ function component.init (tux, opt)
     opt.size = math.min (opt.w, opt.h)
     opt.cx = opt.x + (opt.w / 2) - (opt.size / 2)
     opt.cy = opt.y + (opt.h / 2) - (opt.size / 2)
-    
-    if opt.trueHitbox == false then
-        opt.state = tux.core.registerHitbox (opt.cx, opt.cy, opt.size, opt.size)
-    else
-        opt.state = tux.core.registerHitbox (opt.x, opt.y, opt.w, opt.h)
-    end
+
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt))
 
     if opt.state == "end" then
         opt.data.checked = not opt.data.checked
@@ -24,7 +20,7 @@ end
 
 function component.draw (tux, opt)
     tux.core.debugBoundary ("normal", tux.core.unpackCoords (opt))
-    tux.core.rect (opt.slices, opt.colors, opt.state, opt.cx, opt.cy, opt.size, opt.size)
+    tux.core.rect (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
 
     if opt.data.checked == true then
         local origStyle = love.graphics.getLineStyle ()
