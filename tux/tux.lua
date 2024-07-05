@@ -250,6 +250,8 @@ function tux.core.setColorForState (colors, colorType, state)
     else
         love.graphics.setColor (tux.defaultColors[state][colorType])
     end
+
+    print ("test")
 end
 
 local renderStateLookup = {
@@ -260,7 +262,7 @@ local renderStateLookup = {
     ["end"] = "held",
 }
 function tux.core.getRenderState (state)
-    return renderStateLookup[state]
+    return renderStateLookup[state] or "normal"
 end
 
 --[[==========
