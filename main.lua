@@ -1,6 +1,10 @@
 local tux = require ("tux")
 
 local checkboxData = {checked = false}
+local checkColor = {
+    on = {0, 1, 0, 1},
+    off = {1, 0, 0, 1},
+}
 
 function love.update (dt)
     tux.callbacks.update (dt)
@@ -24,7 +28,9 @@ function love.update (dt)
         tux.utils.setDebugMode (not tux.utils.getDebugMode ())
     end
     
-    tux.show.checkbox ({data = checkboxData, mark = "cross", trueHitbox = false}, 500, 25, 100, 50)
+    tux.show.checkbox ({data = checkboxData, mark = "cross"}, 500, 25, 100, 50)
+
+    tux.show.toggle ({data = checkboxData, checkColor = checkColor}, 25, 350, 50, 50)
 end
 
 function love.draw ()

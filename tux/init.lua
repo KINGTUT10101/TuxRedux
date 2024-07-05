@@ -8,5 +8,6 @@ tux.utils.registerComponent (require (libPath .. "components.button"), false)
 tux.utils.registerComponent (require (libPath .. "components.label"), false)
 tux.utils.registerComponent (require (libPath .. "components.noPressZone"), false)
 tux.utils.registerComponent (require (libPath .. "components.checkbox"), false)
+tux.utils.registerComponent (require (libPath .. "components.toggle"), false)
 
 return tux
