@@ -5,6 +5,7 @@ local checkColor = {
     on = {0, 1, 0, 1},
     off = {1, 0, 0, 1},
 }
+local sliderData = {value = 0}
 
 function love.update (dt)
     tux.callbacks.update (dt)
@@ -31,6 +32,10 @@ function love.update (dt)
     tux.show.checkbox ({data = checkboxData, mark = "cross"}, 500, 25, 100, 50)
 
     tux.show.toggle ({data = checkboxData, checkColor = checkColor}, 25, 350, 50, 50)
+
+    tux.show.slider ({data = sliderData}, 150, 300, 200, 50)
+
+    tux.show.label ({text = math.floor (sliderData.value * 100) / 100}, 25, 25, 50, 25)
 end
 
 function love.draw ()

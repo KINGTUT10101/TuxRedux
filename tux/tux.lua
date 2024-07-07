@@ -27,15 +27,15 @@ local tux = {
     defaultFont = nil,
     defaultColors = {
         normal = {
-            fg = {0, 0, 0, 1},
+            fg = {1, 1, 1, 1},
             bg = {0.5, 0.5, 0.5, 1},
         },
         hover = {
-            fg = {0, 0, 0, 1},
+            fg = {1, 1, 1, 1},
             bg = {0.75, 0.75, 0.75, 1},
         },
         held = {
-            fg = {0, 0, 0, 1},
+            fg = {1, 1, 1, 1},
             bg = {0.25, 0.25, 0.25, 1},
         },
     }, -- Default colors for buttons
@@ -97,11 +97,11 @@ function tux.core.unpackCoords (tbl)
 end
 
 function tux.core.getCursorPosition ()
-    return tux.core.x, tux.core.y
+    return tux.cursor.x, tux.cursor.y
 end
 
 function tux.core.getLockedCursorPosition ()
-    return tux.core.lockedX, tux.core.lockedY
+    return tux.cursor.lockedX, tux.cursor.lockedY
 end
 
 function tux.core.getRelativePosition (x, y, rx, ry)
@@ -235,6 +235,7 @@ function tux.core.drawImage (image, scale, align, valign, padding, x, y, w, h)
 			offsetX = w / 2 - iw / 2
 		end
 		
+        love.graphics.setColor (1, 1, 1, 1)
 		love.graphics.draw (image, x + offsetX, y + offsetY, nil, scale, scale)
 	end
 end
@@ -394,6 +395,11 @@ end
 function tux.utils.setDebugMode (mode)
     assert (type (mode) == "boolean", "Provided debug mode is not a boolean value")
     tux.debugMode = mode
+end
+
+function tux.utils.denormalize (value, min, max)
+    -- TODO
+    error ("Function is not yet implemented")
 end
 
 --[[==========

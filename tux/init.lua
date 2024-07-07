@@ -9,5 +9,6 @@ tux.utils.registerComponent (require (libPath .. "components.label"), false)
 tux.utils.registerComponent (require (libPath .. "components.noPressZone"), false)
 tux.utils.registerComponent (require (libPath .. "components.checkbox"), false)
 tux.utils.registerComponent (require (libPath .. "components.toggle"), false)
+tux.utils.registerComponent (require (libPath .. "components.slider"), false)
 
 return tux
