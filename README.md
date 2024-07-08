@@ -2,7 +2,7 @@
 
 > **NOTE: This project is still in early development and is currently not functional. It will be developed over time as I finish up Just Another Sand Game v1.0**
 
-An immediate-mode UI system for LOVE2D inspired by [SUIT](https://github.com/vrld/suit).
+Tux Redux is an immediate-mode UI system for LOVE2D inspired by [SUIT](https://github.com/vrld/suit). It is a continuation of my original extension to SUIT called [Tux](https://github.com/KINGTUT10101/tux/tree/master).
 
 ### Project Goals
 
