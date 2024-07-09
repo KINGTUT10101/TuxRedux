@@ -30,10 +30,10 @@ function component.draw (tux, opt)
     local barW = opt.w * (1 - edgePadding*2)
     local barH = opt.h / 6
     tux.core.setColorForState (opt.colors, "fg", opt.state)
-    love.graphics.rectangle ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH)
+    tux.core.rect ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH)
 
     -- Slider handle
-    love.graphics.rectangle ("fill", opt.x, opt.y + opt.h*0.5 - opt.hh*0.5, opt.hw, opt.hh)
+    tux.core.rect ("fill", opt.x, opt.y + opt.h*0.5 - opt.hh*0.5, opt.hw, opt.hh)
 end
 
 return component

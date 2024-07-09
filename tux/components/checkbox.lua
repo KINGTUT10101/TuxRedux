@@ -19,7 +19,7 @@ function component.init (tux, opt)
 end
 
 function component.draw (tux, opt)
-    tux.core.rect (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
+    tux.core.slice (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
 
     if opt.data.checked == true then
         local origStyle = love.graphics.getLineStyle ()

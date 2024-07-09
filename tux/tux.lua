@@ -1,9 +1,10 @@
+local tux
 local defaultSlice = {}
 function defaultSlice:draw (x, y, w, h)
-    love.graphics.rectangle ("fill", x, y, w, h)
+    tux.core.rect ("fill", x, y, w, h)
 end
 
-local tux = {
+tux = {
     renderQueue = {}, -- Contains UI items that will be rendered in love.draw ()
     layoutData = {
         origin = {}, -- Origin of the current layout
@@ -23,6 +24,10 @@ local tux = {
         pressedThisFrame = false,
     },
     debugMode = false,
+    tooltip = {
+        text = "",
+        align = ""
+    },
 
     defaultFont = nil,
     defaultColors = {
@@ -138,7 +143,11 @@ function tux.core.registerHitbox (x, y, w, h)
     return "normal"
 end
 
-function tux.core.rect (slices, colors, state, x, y, w, h)
+function tux.core.rect (...)
+    love.graphics.rectangle (...)
+end
+
+function tux.core.slice (slices, colors, state, x, y, w, h)
     state = tux.core.getRenderState (state)
     tux.core.setColorForState (colors, "bg", state)
 
@@ -154,6 +163,12 @@ function tux.core.rect (slices, colors, state, x, y, w, h)
     tux.core.debugBoundary (state, x, y, w, h)
 end
 
+--- Renders the tooltip if one has been provided with tux.utils.setTooltip this frame.
+-- Tooltips will appear above all UI items
+function tux.core.tooltip ()
+
+end
+
 function tux.core.debugBoundary (state, x, y, w, h)
     if tux.debugMode == true then
         if state == "normal" then
@@ -163,7 +178,7 @@ function tux.core.debugBoundary (state, x, y, w, h)
         else
             love.graphics.setColor (1, 0, 0, 1)
         end
-        love.graphics.rectangle ("line", x, y, w, h)
+        tux.core.rect ("line", x, y, w, h)
     end
 end
 
@@ -251,8 +266,6 @@ function tux.core.setColorForState (colors, colorType, state)
     else
         love.graphics.setColor (tux.defaultColors[state][colorType])
     end
-
-    print ("test")
 end
 
 local renderStateLookup = {
@@ -400,6 +413,15 @@ end
 function tux.utils.denormalize (value, min, max)
     -- TODO
     error ("Function is not yet implemented")
+end
+
+function tux.utils.setTooltip (text, align)
+    align = align or "auto"
+
+    assert (type (text) == "string", "Provided tooltip is not a string")
+
+    tux.tooltip.text = text
+    tux.tooltip.align = align
 end
 
 --[[==========

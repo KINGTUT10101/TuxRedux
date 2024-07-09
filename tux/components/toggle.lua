@@ -28,7 +28,7 @@ function component.draw (tux, opt)
     else
         tux.core.setColorForState (opt.colors, "fg", opt.state)
     end
-    love.graphics.rectangle ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH, barW*0.15, barH*0.5)
+    tux.core.rect ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH, barW*0.15, barH*0.5)
 
     -- Toggle ball
     local radius = opt.size / 2

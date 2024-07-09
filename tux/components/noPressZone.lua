@@ -11,7 +11,7 @@ end
 function component.draw (tux, opt)
     if tux.utils.getDebugMode () == true then
         love.graphics.setColor (0.25, 0.25, 0.25, 0.5)
-        love.graphics.rectangle ("fill", tux.core.unpackCoords (opt))
+        tux.core.rect ("fill", tux.core.unpackCoords (opt))
 
         tux.core.debugBoundary (opt.state, tux.core.unpackCoords (opt))
     end
