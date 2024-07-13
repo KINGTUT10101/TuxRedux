@@ -12,6 +12,10 @@ tux = {
         grid = {}, -- Size of each cell in the current layout
         position = {}, -- Position in the grid
     }, -- Contains data used by the layout system
+    screen = {
+        w = love.graphics.getWidth (),
+        h = love.graphics.getHeight (),
+    },
     comp = {}, -- Contains the registered UI components
     cursor = {
         x = 0,
@@ -21,15 +25,16 @@ tux = {
         isDown = false,
         wasDown = false,
         hoveredThisFrame = false,
-        pressedThisFrame = false,
+        pressedThisFrame = false, -- Maybe change this to one flag that just stores the last state this frame?
     },
     debugMode = false,
     tooltip = {
         text = "",
-        align = ""
+        align = "",
+        font = love.graphics.getFont (),
     },
 
-    defaultFont = nil,
+    defaultFont = love.graphics.getFont (),
     defaultColors = {
         normal = {
             fg = {1, 1, 1, 1},
@@ -166,7 +171,50 @@ end
 --- Renders the tooltip if one has been provided with tux.utils.setTooltip this frame.
 -- Tooltips will appear above all UI items
 function tux.core.tooltip ()
+	if tux.cursor.hoveredThisFrame == true then
+		local text = tux.tooltip.text
+		local mx, my = tux.utils.getCursorPosition ()
+		local font = tux.tooltip.font
+		local fontH = font:getHeight ()
+		local textWidth = font:getWidth (text)
+        local align = tux.tooltip.align
 
+		-- Chooses the alignment that will keep the full text on screen
+		-- Defaults to right alignment if there is room
+		if align == "auto" then
+			local screenWidth = tux.screen.w
+
+			if mx + textWidth > screenWidth then
+				align = "center"
+
+				if mx + (textWidth / 2) > screenWidth then
+					align = "left"
+				end
+			else
+				align = "right"
+			end
+		end
+
+		-- Draws the rectangle
+		love.graphics.setColor (0, 0, 0, 0.75)
+		if align == "left" then
+			love.graphics.rectangle ("fill", mx - textWidth, my - fontH, textWidth, fontH)
+		elseif align == "right" then
+			love.graphics.rectangle ("fill", mx, my - fontH, textWidth, fontH)
+		else
+			love.graphics.rectangle ("fill", mx - (textWidth / 2), my - fontH, textWidth, fontH)
+		end
+
+		-- Draws the text
+		love.graphics.setColor (1, 1, 1, 1)
+		if align == "left" then
+			love.graphics.print (text, mx - textWidth, my - fontH)
+		elseif align == "right" then
+			love.graphics.print (text, mx, my - fontH)
+		else
+			love.graphics.print (text, mx - (textWidth / 2), my - fontH)
+		end
+	end
 end
 
 function tux.core.debugBoundary (state, x, y, w, h)
@@ -308,6 +356,8 @@ function tux.callbacks.update (dt, mx, my, isDown)
     -- Reset flags
     tux.cursor.hoveredThisFrame = false
     tux.cursor.pressedThisFrame = false
+    tux.tooltip.text = ""
+    tux.tooltip.align = "auto"
 end
 
 function tux.callbacks.draw ()
@@ -340,6 +390,11 @@ function tux.utils.registerComponent (component, override)
             opt.x, opt.y, opt.w, opt.h = x, y, w, h
 
             local returnVal = newComp.init (tux, opt)
+
+            -- Process tooltip
+            if opt.tooltip ~= nil and opt.state == "hover" then
+                tux.utils.setTooltip (opt.tooltip.text, opt.tooltip.align, opt.tooltip.font)
+            end
 
             tux.renderQueue[#tux.renderQueue + 1] = {
                 opt = opt,
@@ -420,8 +475,26 @@ function tux.utils.setTooltip (text, align)
 
     assert (type (text) == "string", "Provided tooltip is not a string")
 
-    tux.tooltip.text = text
-    tux.tooltip.align = align
+    if tux.tooltip.text == "" then
+        tux.tooltip.text = text
+        tux.tooltip.align = align
+        return true
+    else
+        return false
+    end
+end
+
+function tux.utils.setDefaultTooltipFont (font)
+    tux.tooltip.font = font
+end
+
+function tux.utils.getDefaultTooltipFont ()
+    return tux.tooltip.font
+end
+
+function tux.utils.setScreenSize (w, h)
+    tux.screen.w = w
+    tux.screen.h = h
 end
 
 --[[==========
