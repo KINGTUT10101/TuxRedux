@@ -144,8 +144,9 @@ function tux.core.registerHitbox (x, y, w, h)
                 end
             end
         end
+
+        tux.cursor.currentState = newValue
     end
-    tux.cursor.currentState = newValue
 
     return newValue
 end
@@ -173,9 +174,9 @@ end
 --- Renders the tooltip if one has been provided with tux.utils.setTooltip this frame.
 -- Tooltips will appear above all UI items
 function tux.core.tooltip ()
-	if tux.cursor.currentState == "hover" then
+	if tux.tooltip.text ~= "" then
 		local text = tux.tooltip.text
-		local mx, my = tux.utils.getCursorPosition ()
+		local mx, my = tux.core.getCursorPosition ()
 		local font = tux.tooltip.font
 		local fontH = font:getHeight ()
 		local textWidth = font:getWidth (text)
@@ -363,11 +364,17 @@ end
 
 function tux.callbacks.draw ()
     local origFont = love.graphics.getFont ()
+
+    -- Render UI items
     local queue = tux.renderQueue
     for i = #queue, 1, -1 do
         queue[i].draw (tux, queue[i].opt)
         queue[i] = nil
     end
+
+    -- Render tooltip
+    tux.core.tooltip ()
+
     love.graphics.setFont (origFont)
 end
 
@@ -393,8 +400,8 @@ function tux.utils.registerComponent (component, override)
             local returnVal = newComp.init (tux, opt)
 
             -- Process tooltip
-            if opt.tooltip ~= nil and opt.state == "hover" then
-                tux.utils.setTooltip (opt.tooltip.text, opt.tooltip.align, opt.tooltip.font)
+            if opt.tooltip ~= nil and opt.state ~= "normal" then
+                tux.utils.setTooltip (opt.tooltip.text, opt.tooltip.align)
             end
 
             tux.renderQueue[#tux.renderQueue + 1] = {

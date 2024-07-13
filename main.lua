@@ -11,7 +11,12 @@ function love.update (dt)
     tux.callbacks.update (dt)
 
     tux.show.label ({colors = {1, 0, 0, 1}}, 100, 100, 250, 100)
-    tux.show.label ({colors = {1, 0, 0, 1}}, 150, 150, 250, 100)
+    tux.show.label ({
+        colors = {1, 0, 1, 1},
+        tooltip = {
+            text = "This is a test"
+        }
+    }, 150, 150, 250, 100)
 
     if tux.show.button (nil, 400, 300, 100, 200) == "end" then
         print ("end")
@@ -34,7 +39,6 @@ function love.update (dt)
     tux.show.toggle ({data = checkboxData, checkColor = checkColor}, 25, 350, 50, 50)
 
     tux.show.slider ({data = sliderData}, 150, 300, 200, 50)
-    tux.show.slider ({data = sliderData}, 150, 400, 450, 75)
 
     tux.show.label ({text = math.floor (sliderData.value * 100) / 100}, 25, 25, 50, 25)
 end
