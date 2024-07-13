@@ -1,7 +1,6 @@
 local component = {
     id = "slider",
 }
-local edgePadding = 0.05
 
 function component.init (tux, opt)
     assert (opt.data ~= nil, "Persistent UI item was not provided with a data table")
@@ -29,13 +28,18 @@ function component.draw (tux, opt)
     tux.core.debugBoundary (opt.state, tux.core.unpackCoords (opt))
     
     -- Slider bar
-    local barW = opt.w * (1 - edgePadding*2)
+    local edgePadding = opt.hw / 2
+    local barW = opt.w - edgePadding * 2
     local barH = opt.h / 6
     tux.core.setColorForState (opt.colors, "fg", opt.state)
-    tux.core.rect ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH)
+    tux.core.rect ("fill", opt.x + edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH)
 
     -- Slider handle
-    tux.core.rect ("fill", opt.hx, opt.y + opt.h*0.5 - opt.hh*0.5, opt.hw, opt.hh)
+    if opt.style == "round" then
+        tux.core.rect ("fill", opt.hx, opt.y + opt.h*0.5 - opt.hh*0.5, opt.hw, opt.hh, opt.hw * 0.25, opt.hh / 4)
+    else
+        tux.core.rect ("fill", opt.hx, opt.y + opt.h*0.5 - opt.hh*0.5, opt.hw, opt.hh)
+    end
 end
 
 return component

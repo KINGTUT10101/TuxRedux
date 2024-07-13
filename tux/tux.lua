@@ -24,8 +24,7 @@ tux = {
         lockedY = 0,
         isDown = false,
         wasDown = false,
-        hoveredThisFrame = false,
-        pressedThisFrame = false, -- Maybe change this to one flag that just stores the last state this frame?
+        currentState = "normal",
     },
     debugMode = false,
     tooltip = {
@@ -119,33 +118,36 @@ function tux.core.getRelativePosition (x, y, rx, ry)
 end
 
 function tux.core.registerHitbox (x, y, w, h)
-    if tux.cursor.hoveredThisFrame == false then
+    local newValue = "normal"
+
+    if tux.cursor.currentState == "normal" then
         local mx, my = tux.cursor.lockedX, tux.cursor.lockedY
 
         -- Check if cursor is in bounds
         if x <= mx and mx <= x + w and y <= my and my <= y + h then
-            tux.cursor.hoveredThisFrame = true
+            newValue = "hover"
             
             -- Check if cursor is down
             if tux.cursor.isDown == true then
-                tux.cursor.pressedThisFrame = true
+                newValue = "held"
                 
                 if tux.cursor.wasDown == false then
-                    return "start"
+                    newValue = "start"
                 else
-                    return "held"
+                    newValue = "held"
                 end
             else
                 if tux.cursor.wasDown == true then
-                    return "end"
+                    newValue = "end"
                 else
-                    return "hover"
+                    newValue = "hover"
                 end
             end
         end
     end
+    tux.cursor.currentState = newValue
 
-    return "normal"
+    return newValue
 end
 
 function tux.core.rect (...)
@@ -171,7 +173,7 @@ end
 --- Renders the tooltip if one has been provided with tux.utils.setTooltip this frame.
 -- Tooltips will appear above all UI items
 function tux.core.tooltip ()
-	if tux.cursor.hoveredThisFrame == true then
+	if tux.cursor.currentState == "hover" then
 		local text = tux.tooltip.text
 		local mx, my = tux.utils.getCursorPosition ()
 		local font = tux.tooltip.font
@@ -354,8 +356,7 @@ function tux.callbacks.update (dt, mx, my, isDown)
     end
 
     -- Reset flags
-    tux.cursor.hoveredThisFrame = false
-    tux.cursor.pressedThisFrame = false
+    tux.cursor.currentState = "normal"
     tux.tooltip.text = ""
     tux.tooltip.align = "auto"
 end
@@ -411,13 +412,14 @@ end
 -- Returns true if a UI item was clicked yet in the current frame
 -- It's best to use this AFTER all of your UI items have been shown
 function tux.utils.itemClicked ()
-    return tux.cursor.pressedThisFrame
+    local state = tux.cursor.currentState
+    return state == "start" or state == "held" or state == "end"
 end
 
 -- Returns true if a UI item was hoevered over yet in the current frame
 -- It's best to use this AFTER all of your UI items have been shown
 function tux.utils.itemHovered ()
-    return tux.cursor.hoveredThisFrame
+    return tux.cursor.currentState == "hover"
 end
 
 function tux.utils.removeComponent (id)

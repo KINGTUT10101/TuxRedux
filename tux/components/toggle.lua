@@ -28,13 +28,22 @@ function component.draw (tux, opt)
     else
         tux.core.setColorForState (opt.colors, "fg", opt.state)
     end
-    tux.core.rect ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH, barW*0.15, barH*0.5)
+    if opt.style == "round" then
+        tux.core.rect ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH, barW*0.15, barH*0.5)
+    else
+        tux.core.rect ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH)
+    end
 
     -- Toggle ball
-    local radius = opt.size / 2
-    local ballX = (opt.data.checked) and opt.x + opt.w - radius or opt.x + radius
     tux.core.setColorForState (opt.colors, "fg", opt.state)
-    love.graphics.circle ("fill", ballX, opt.y + opt.h*0.5, radius)
+    if opt.style == "round" then
+        local radius = opt.size / 2
+        local ballX = (opt.data.checked) and opt.x + opt.w - radius or opt.x + radius
+        love.graphics.circle ("fill", ballX, opt.y + opt.h*0.5, radius)
+    else
+        local rectX = (opt.data.checked) and opt.x + opt.w - opt.size or opt.x
+        love.graphics.rectangle ("fill", rectX, opt.y + opt.h * 0.5 - opt.size * 0.5, opt.size, opt.size)
+    end
 end
 
 return component

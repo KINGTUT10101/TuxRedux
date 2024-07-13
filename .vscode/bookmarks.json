@@ -9,27 +9,27 @@
 					"label": "Tux table"
 				},
 				{
-					"line": 78,
+					"line": 77,
 					"column": 0,
 					"label": "Helper functions"
 				},
 				{
-					"line": 101,
+					"line": 100,
 					"column": 0,
 					"label": "Core methods"
 				},
 				{
-					"line": 327,
+					"line": 329,
 					"column": 0,
 					"label": "Callback functions"
 				},
 				{
-					"line": 370,
+					"line": 371,
 					"column": 0,
 					"label": "Utility methods"
 				},
 				{
-					"line": 465,
+					"line": 467,
 					"column": 0,
 					"label": "Layout methods"
 				}

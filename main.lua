@@ -34,6 +34,7 @@ function love.update (dt)
     tux.show.toggle ({data = checkboxData, checkColor = checkColor}, 25, 350, 50, 50)
 
     tux.show.slider ({data = sliderData}, 150, 300, 200, 50)
+    tux.show.slider ({data = sliderData}, 150, 400, 450, 75)
 
     tux.show.label ({text = math.floor (sliderData.value * 100) / 100}, 25, 25, 50, 25)
 end
