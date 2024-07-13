@@ -10,7 +10,7 @@ local sliderData = {value = 0}
 function love.update (dt)
     tux.callbacks.update (dt)
 
-    tux.show.label ({colors = {1, 0, 0, 1}}, 100, 100, 250, 100)
+    tux.show.label ({colors = {1, 0, 0, 1},}, 100, 100, 250, 100)
     tux.show.label ({
         colors = {1, 0, 1, 1},
         tooltip = {
@@ -40,7 +40,10 @@ function love.update (dt)
 
     tux.show.slider ({data = sliderData}, 150, 300, 200, 50)
 
-    tux.show.label ({text = math.floor (sliderData.value * 100) / 100}, 25, 25, 50, 25)
+    tux.show.label ({
+        text = math.floor (sliderData.value * 100) / 100,
+        colors = {1, 0, 1, 1},
+    }, 25, 25, 50, 25)
 end
 
 function love.draw ()

@@ -105,6 +105,15 @@ function tux.core.unpackCoords (tbl)
     return tbl.x, tbl.y, tbl.w, tbl.h
 end
 
+function tux.core.unpackPadding (paddingTbl)
+    local padAll = paddingTbl.padAll or 0
+	local padX, padY = paddingTbl.padX or padAll, paddingTbl.padY or padAll
+	local padLeft, padRight = paddingTbl.padLeft or padX, paddingTbl.padRight or padX
+	local padTop, padBottom = paddingTbl.padTop or padY, paddingTbl.padBottom or padY
+
+    return padLeft, padRight, padTop, padBottom
+end
+
 function tux.core.getCursorPosition ()
     return tux.cursor.x, tux.cursor.y
 end
@@ -116,6 +125,7 @@ end
 function tux.core.getRelativePosition (x, y, rx, ry)
     return rx - x, ry - y
 end
+
 
 function tux.core.registerHitbox (x, y, w, h)
     local newValue = "normal"
@@ -239,41 +249,73 @@ end
 
 -- TODO: Update the padding system to use the one from the original tux
 function tux.core.print (text, align, valign, padding, font, colors, state, x, y, w, h)
-    text = text or ""
-    padding = padding or {}
-    font = font or love.graphics.getFont()
-	
-    tux.core.setFont (font)
-	local offsetY
-	local padEdgeX, padEdgeY = padding.edgeX or 0, padding.edgeY or 0
+    if text ~= nil and text ~= "" then
+        align = align or "center"
+        valign = valign or "center"
+        padding = padding or {}
+        font = font or tux.utils.getDefaultFont ()
+        
+        tux.core.setFont (font)
+        local offsetY
+        local padLeft, padRight, padTop, padBottom = tux.core.unpackPadding (padding)
 
-	x = x + padEdgeX
-	y = y + padEdgeY
-	w = w - (2 * padEdgeX)
-	h = h - (2 * padEdgeY)
+        x = x + padLeft
+        y = y + padTop
+        w = w - (padLeft + padRight)
+        h = h - (padTop + padBottom)
 
-	local _, wrappedText = font:getWrap(text, w)
-	local fontH = font:getHeight()
-	local textH = fontH * #wrappedText
+        local maxTextWidth, wrappedText = font:getWrap(text, w)
+        local fontH = font:getHeight()
+        local textH = fontH * #wrappedText
 
-	if textH > h then
-		text = ""
-		textH = fontH * math.floor (h / fontH)
-		for i = 1, math.floor (h / fontH) do
-			text = text .. wrappedText[i] .. "\n"
-		end
-	end
+        if textH > h then
+            text = ""
+            textH = fontH * math.floor (h / fontH)
+            for i = 1, math.floor (h / fontH) do
+                text = text .. wrappedText[i] .. "\n"
+            end
+        end
 
-    if valign == "top" then
-        offsetY = padEdgeY
-    elseif valign == "bottom" then
-        offsetY = h - textH - padEdgeY
-    else
-        offsetY = h / 2 - textH / 2
+        if valign == "top" then
+            offsetY = padTop
+        elseif valign == "bottom" then
+            offsetY = h - textH - padBottom
+        else
+            offsetY = (h - textH) / 2
+        end
+        
+        tux.core.setFont (font)
+        tux.core.setColorForState (colors, "fg", state)
+        love.graphics.printf (text, x, y + offsetY, w, align)
     end
+
+	-- x = x + padEdgeX
+	-- y = y + padEdgeY
+	-- w = w - (2 * padEdgeX)
+	-- h = h - (2 * padEdgeY)
+
+	-- local _, wrappedText = font:getWrap(text, w)
+	-- local fontH = font:getHeight()
+	-- local textH = fontH * #wrappedText
+
+	-- if textH > h then
+	-- 	text = ""
+	-- 	textH = fontH * math.floor (h / fontH)
+	-- 	for i = 1, math.floor (h / fontH) do
+	-- 		text = text .. wrappedText[i] .. "\n"
+	-- 	end
+	-- end
+
+    -- if valign == "top" then
+    --     offsetY = padEdgeY
+    -- elseif valign == "bottom" then
+    --     offsetY = h - textH - padEdgeY
+    -- else
+    --     offsetY = h / 2 - textH / 2
+    -- end
     
-    tux.core.setColorForState (colors, "fg", state)
-    love.graphics.printf (text, x, y + offsetY, w, align or "center")
+    -- tux.core.setColorForState (colors, "fg", state)
+    -- love.graphics.printf (text, x, y + offsetY, w, align or "center")
 end
 
 function tux.core.drawImage (image, scale, align, valign, padding, x, y, w, h)
@@ -310,7 +352,11 @@ function tux.core.setColorForState (colors, colorType, state)
     state = tux.core.getRenderState (state)
     if colors ~= nil then
         if type (colors[1]) == "number" then
-            love.graphics.setColor (colors)
+            if colorType == "bg" then
+                love.graphics.setColor (colors)
+            else
+                love.graphics.setColor (tux.defaultColors[state][colorType])
+            end
         else
             love.graphics.setColor (colors[state][colorType] or tux.defaultColors[state][colorType])
         end
@@ -395,8 +441,11 @@ function tux.utils.registerComponent (component, override)
         function newComp.show (opt, x, y, w, h)
             opt = opt or {}
             assert (type (opt) == "table", "Attempt to use a non-table value for UI item options")
+
+            -- Update position and size
             opt.x, opt.y, opt.w, opt.h = x, y, w, h
 
+            -- Initialize new UI item
             local returnVal = newComp.init (tux, opt)
 
             -- Process tooltip
@@ -404,6 +453,7 @@ function tux.utils.registerComponent (component, override)
                 tux.utils.setTooltip (opt.tooltip.text, opt.tooltip.align)
             end
 
+            -- Add new UI item to render queue
             tux.renderQueue[#tux.renderQueue + 1] = {
                 opt = opt,
                 draw = newComp.draw,
