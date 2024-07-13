@@ -11,14 +11,16 @@ function component.init (tux, opt)
     opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt))
 
     -- Update data value
+    local edgePadding = opt.hw / 2
+    local startX = opt.x + edgePadding
+    local endX = opt.x + opt.w - edgePadding
     if opt.state == "held" then
-        local startX = opt.x + opt.hw*0.5
-        local endX = startX + opt.w - opt.hw
         local mx, my = tux.core.getCursorPosition ()
         local rmx = mx - startX
 
-        opt.value = rmx / (endX - startX)
+        opt.data.value = math.max (math.min (rmx / (endX - startX), 1), 0)
     end
+    opt.hx = opt.data.value * (endX - startX) + opt.x
 
     return opt.state
 end
@@ -33,7 +35,7 @@ function component.draw (tux, opt)
     tux.core.rect ("fill", opt.x + opt.w*edgePadding, opt.y + opt.h*0.5 - barH*0.5, barW, barH)
 
     -- Slider handle
-    tux.core.rect ("fill", opt.x, opt.y + opt.h*0.5 - opt.hh*0.5, opt.hw, opt.hh)
+    tux.core.rect ("fill", opt.hx, opt.y + opt.h*0.5 - opt.hh*0.5, opt.hw, opt.hh)
 end
 
 return component
