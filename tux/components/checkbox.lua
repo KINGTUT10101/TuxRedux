@@ -26,7 +26,7 @@ function component.draw (tux, opt)
         local origWidth = love.graphics.getLineWidth ()
         local origJoin = love.graphics.getLineJoin ()
         love.graphics.setLineStyle('smooth')
-        love.graphics.setLineWidth(5)
+        love.graphics.setLineWidth(opt.size * 3 / 25)
         love.graphics.setLineJoin("bevel")
         
         tux.core.setColorForState (opt.colors, "fg", "normal")
