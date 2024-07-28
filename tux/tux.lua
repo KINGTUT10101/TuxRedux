@@ -1,3 +1,5 @@
+local utf8 = require("utf8")
+
 local tux
 local defaultSlice = {}
 function defaultSlice:draw (x, y, w, h)
@@ -22,10 +24,17 @@ tux = {
         y = 0,
         lockedX = 0,
         lockedY = 0,
+        lastX = 0,
+        lastY = 0,
+        lastLockedX = 0,
+        lastLockedY = 0,
         isDown = false,
         wasDown = false,
         currentState = "normal",
+        lastState = "normal",
     },
+    pressedKey = nil,
+    specialPressedKey = nil,
     debugMode = false,
     tooltip = {
         text = "",
@@ -118,14 +127,29 @@ function tux.core.getCursorPosition ()
     return tux.cursor.x, tux.cursor.y
 end
 
+function tux.core.getLastCursorPosition ()
+    return tux.cursor.lastX, tux.cursor.lastY
+end
+
 function tux.core.getLockedCursorPosition ()
     return tux.cursor.lockedX, tux.cursor.lockedY
+end
+
+function tux.core.getLastLockedCursorPosition ()
+    return tux.cursor.lastLockedX, tux.cursor.lastLockedY
 end
 
 function tux.core.getRelativePosition (x, y, rx, ry)
     return rx - x, ry - y
 end
 
+function tux.core.isDown ()
+    return tux.cursor.isDown
+end
+
+function tux.core.wasDown ()
+    return tux.cursor.wasDown
+end
 
 function tux.core.registerHitbox (x, y, w, h)
     local newValue = "normal"
@@ -159,6 +183,22 @@ function tux.core.registerHitbox (x, y, w, h)
     end
 
     return newValue
+end
+
+-- Checks if the provided area 
+function tux.core.checkLastHitbox (x, y, w, h)
+    local mx, my = tux.cursor.lastLockedX, tux.cursor.lastLockedY
+
+    if x <= mx and mx <= x + w and y <= my and my <= y + h then
+
+        return tux.cursor.lastState
+    end
+
+    return "normal"
+end
+
+function tux.core.getLastState ()
+    return tux.cursor.lastState
 end
 
 function tux.core.rect (...)
@@ -288,34 +328,6 @@ function tux.core.print (text, align, valign, padding, font, colors, state, x, y
         tux.core.setColorForState (colors, "fg", state)
         love.graphics.printf (text, x, y + offsetY, w, align)
     end
-
-	-- x = x + padEdgeX
-	-- y = y + padEdgeY
-	-- w = w - (2 * padEdgeX)
-	-- h = h - (2 * padEdgeY)
-
-	-- local _, wrappedText = font:getWrap(text, w)
-	-- local fontH = font:getHeight()
-	-- local textH = fontH * #wrappedText
-
-	-- if textH > h then
-	-- 	text = ""
-	-- 	textH = fontH * math.floor (h / fontH)
-	-- 	for i = 1, math.floor (h / fontH) do
-	-- 		text = text .. wrappedText[i] .. "\n"
-	-- 	end
-	-- end
-
-    -- if valign == "top" then
-    --     offsetY = padEdgeY
-    -- elseif valign == "bottom" then
-    --     offsetY = h - textH - padEdgeY
-    -- else
-    --     offsetY = h / 2 - textH / 2
-    -- end
-    
-    -- tux.core.setColorForState (colors, "fg", state)
-    -- love.graphics.printf (text, x, y + offsetY, w, align or "center")
 end
 
 function tux.core.drawImage (image, scale, align, valign, padding, x, y, w, h)
@@ -376,6 +388,27 @@ function tux.core.getRenderState (state)
     return renderStateLookup[state] or "normal"
 end
 
+function tux.core.concatTypedText (text)
+    print (text)
+    if tux.pressedKey ~= nil then
+        return text .. (tux.pressedKey or "")
+    else
+        local specialKey = tux.specialPressedKey
+
+        if specialKey == "backspace" then
+            local byteoffset = utf8.offset(text, -1)
+
+            if byteoffset then
+                -- Removes the last UTF-8 character.
+                -- string.sub operates on bytes rather than UTF-8 characters, so we couldn't do string.sub(text, 1, -2).
+                return string.sub(text, 1, byteoffset - 1)
+            end
+        end
+
+        return text
+    end
+end
+
 --[[==========
     CALLBACKS
 ============]]
@@ -383,6 +416,11 @@ end
 -- This should run BEFORE you show any UI items
 function tux.callbacks.update (dt, mx, my, isDown)
     tux.cursor.wasDown = tux.cursor.isDown
+    tux.cursor.lastState = tux.cursor.currentState
+    tux.cursor.lastX = tux.cursor.x
+    tux.cursor.lastY = tux.cursor.y
+    tux.cursor.lastLockedX = tux.cursor.lockedX
+    tux.cursor.lastLockedY = tux.cursor.lockedY
 
     if isDown == nil then
         tux.cursor.isDown = love.mouse.isDown (1)
@@ -422,6 +460,17 @@ function tux.callbacks.draw ()
     tux.core.tooltip ()
 
     love.graphics.setFont (origFont)
+
+    tux.pressedKey = nil
+    tux.specialPressedKey = nil
+end
+
+function tux.callbacks.textinput (text)
+    tux.pressedKey = text
+end
+
+function tux.callbacks.keypressed (key, scancode, isrepeat)
+    tux.specialPressedKey = key
 end
 
 --[[==========

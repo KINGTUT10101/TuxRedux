@@ -6,6 +6,10 @@ local checkColor = {
     off = {1, 0, 0, 1},
 }
 local sliderData = {value = 0}
+local singleInputData = {
+    text = "First data",
+    inFocus = false,
+}
 
 function love.update (dt)
     tux.callbacks.update (dt)
@@ -44,6 +48,8 @@ function love.update (dt)
         text = math.floor (sliderData.value * 100) / 100,
         colors = {1, 0, 1, 1},
     }, 25, 25, 50, 25)
+
+    tux.show.singleInput ({data = singleInputData}, 150, 400, 200, 50)
 end
 
 function love.draw ()
@@ -56,4 +62,12 @@ function love.draw ()
 
     -- Prints the current debug mode
     love.graphics.print ("Debug: " .. tostring (tux.utils.getDebugMode ()), 700, 50)
+end
+
+function love.textinput (text)
+    tux.callbacks.textinput (text)
+end
+
+function love.keypressed (key, scancode, isrepeat)
+    tux.callbacks.keypressed (key, scancode, isrepeat)
 end

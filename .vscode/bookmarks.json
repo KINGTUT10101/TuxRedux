@@ -4,32 +4,27 @@
 			"path": "tux/tux.lua",
 			"bookmarks": [
 				{
-					"line": 6,
+					"line": 8,
 					"column": 0,
 					"label": "Tux table"
 				},
 				{
-					"line": 77,
+					"line": 86,
 					"column": 0,
 					"label": "Helper functions"
 				},
 				{
-					"line": 100,
+					"line": 109,
 					"column": 0,
 					"label": "Core methods"
 				},
 				{
-					"line": 376,
+					"line": 388,
 					"column": 0,
 					"label": "Callback functions"
 				},
 				{
-					"line": 424,
-					"column": 0,
-					"label": "Utility methods"
-				},
-				{
-					"line": 524,
+					"line": 573,
 					"column": 0,
 					"label": "Layout methods"
 				}
