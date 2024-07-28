@@ -409,6 +409,12 @@ function tux.core.concatTypedText (text)
     end
 end
 
+function tux.core.setKeyboardFocus (state)
+    if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
+        love.keyboard.setTextInput(state)
+    end
+end
+
 --[[==========
     CALLBACKS
 ============]]

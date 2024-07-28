@@ -26,6 +26,8 @@ function component.init (tux, opt)
         opt.data.text = tux.core.concatTypedText (opt.data.text)
     end
 
+    tux.core.setKeyboardFocus (opt.data.inFocus)
+
     return opt.state -- The state will be returned by tux.show
 end
 
