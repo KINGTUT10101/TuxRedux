@@ -96,6 +96,7 @@ The following is a list of goals that I intend to fulfill with this project in t
     *   Padding
     *   Nineslices
     *   Better text alignment
+    *   Automatic font sizing
 *   Improved layout system
 *   High extensibility
     *   New components only require a couple functions and attributes to create

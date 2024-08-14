@@ -39,7 +39,7 @@ tux = {
     tooltip = {
         text = "",
         align = "",
-        font = love.graphics.getFont (),
+        font = nil,
     },
 
     defaultFont = love.graphics.getFont (),
@@ -62,6 +62,7 @@ tux = {
         hover = defaultSlice,
         held = defaultSlice,
     }, -- Default slices for buttons
+    fontSizeCache = {}, -- Used to save font objects for various font sizes
 
     core = {}, -- Internal functions not meant for outside use
     callbacks = {}, -- Used in LOVE2Ds callbacks to keep tux updated
@@ -226,11 +227,13 @@ end
 function tux.core.tooltip ()
 	if tux.tooltip.text ~= "" then
 		local text = tux.tooltip.text
+        local align = tux.tooltip.align
 		local mx, my = tux.core.getCursorPosition ()
-		local font = tux.tooltip.font
+
+        tux.core.setFont (tux.tooltip.font)
+		local font = love.graphics.getFont ()
 		local fontH = font:getHeight ()
 		local textWidth = font:getWidth (text)
-        local align = tux.tooltip.align
 
 		-- Chooses the alignment that will keep the full text on screen
 		-- Defaults to right alignment if there is room
@@ -283,19 +286,43 @@ function tux.core.debugBoundary (state, x, y, w, h)
     end
 end
 
-function tux.core.setFont (font)
-    love.graphics.setFont (font or tux.defaultFont)
+function tux.core.processFont (font, fsize)
+    font = font or tux.defaultFont
+    if fsize == nil then
+        return font
+    else
+        -- Check cache for font of this size
+        if tux.fontSizeCache[font] == nil or tux.fontSizeCache[font][fsize] == nil then
+            if tux.fontSizeCache[font] == nil then
+                tux.fontSizeCache[font] = {}
+            end
+            
+            -- Generate new font object and add to cache
+            love.graphics.setFont (font)
+            tux.fontSizeCache[font][fsize] = love.graphics.setNewFont (fsize)
+            return tux.fontSizeCache[font][fsize]
+        else
+            -- Use font from cache
+            love.graphics.setFont (tux.fontSizeCache[font][fsize])
+            return tux.fontSizeCache[font][fsize]
+        end
+    end
+end
+
+function tux.core.setFont (font, fsize)
+    love.graphics.setFont (tux.core.processFont (font, fsize))
 end
 
 -- TODO: Update the padding system to use the one from the original tux
-function tux.core.print (text, align, valign, padding, font, colors, state, x, y, w, h)
+function tux.core.print (text, align, valign, padding, font, fsize, colors, state, x, y, w, h)
     if text ~= nil and text ~= "" then
         align = align or "center"
         valign = valign or "center"
         padding = padding or {}
-        font = font or tux.utils.getDefaultFont ()
+
+        tux.core.setFont (font, fsize)
+        font = love.graphics.getFont ()
         
-        tux.core.setFont (font)
         local offsetY
         local padLeft, padRight, padTop, padBottom = tux.core.unpackPadding (padding)
 
@@ -324,19 +351,18 @@ function tux.core.print (text, align, valign, padding, font, colors, state, x, y
             offsetY = (h - textH) / 2
         end
         
-        tux.core.setFont (font)
         tux.core.setColorForState (colors, "fg", state)
         love.graphics.printf (text, x, y + offsetY, w, align)
     end
 end
 
-function tux.core.drawImage (image, scale, align, valign, padding, x, y, w, h)
+function tux.core.drawImage (image, iscale, align, valign, padding, x, y, w, h)
 	if image ~= nil then
 		local offsetX, offsetY
 		local padEdgeX, padEdgeY = padding.padEdgeX or 0, padding.padEdgeY or 0
 		local iw, ih = image:getDimensions ()
-		iw = iw * (scale or 1)
-		ih = ih * (scale or 1)
+		iw = iw * (iscale or 1)
+		ih = ih * (iscale or 1)
 
 		-- Images will render on the opposite side of the text
 		if valign == "bottom" then
@@ -356,7 +382,7 @@ function tux.core.drawImage (image, scale, align, valign, padding, x, y, w, h)
 		end
 		
         love.graphics.setColor (1, 1, 1, 1)
-		love.graphics.draw (image, x + offsetX, y + offsetY, nil, scale, scale)
+		love.graphics.draw (image, x + offsetX, y + offsetY, nil, iscale, iscale)
 	end
 end
 
@@ -389,7 +415,6 @@ function tux.core.getRenderState (state)
 end
 
 function tux.core.concatTypedText (text)
-    print (text)
     if tux.pressedKey ~= nil then
         return text .. (tux.pressedKey or "")
     else
@@ -409,10 +434,15 @@ function tux.core.concatTypedText (text)
     end
 end
 
+-- TODO?: change to grab keyboard focus, only allow it to be called once per frame, and reset state after every frame
 function tux.core.setKeyboardFocus (state)
-    if love.system.getOS() == "Android" or love.system.getOS() == "iOS" then
-        love.keyboard.setTextInput(state)
+    if love.system.getOS () == "Android" or love.system.getOS () == "iOS" then
+        love.keyboard.setTextInput (state)
     end
+end
+
+function tux.core.getFontForSize (font, size)
+
 end
 
 --[[==========
@@ -566,8 +596,22 @@ function tux.utils.getDefaultFont ()
     return tux.defaultFont
 end
 
-function tux.utils.setDefaultFont (font)
-    tux.defaultFont = font
+function tux.utils.setDefaultFont (font, fsize)
+    tux.defaultFont = tux.core.processFont (font, fsize)
+end
+
+function tux.utils.clearFontCache ()
+    tux.fontSizeCache = {}
+end
+
+function tux.utils.getFontCacheSize ()
+    local total = 0
+
+    for k, v in pairs (tux.fontSizeCache) do
+        total = total + 1
+    end
+
+    return total
 end
 
 function tux.utils.getDebugMode ()
@@ -598,11 +642,11 @@ function tux.utils.setTooltip (text, align)
     end
 end
 
-function tux.utils.setDefaultTooltipFont (font)
-    tux.tooltip.font = font
+function tux.utils.setTooltipFont (font, fsize)
+    tux.tooltip.font = tux.core.processFont (font, fsize)
 end
 
-function tux.utils.getDefaultTooltipFont ()
+function tux.utils.getTooltipFont ()
     return tux.tooltip.font
 end
 

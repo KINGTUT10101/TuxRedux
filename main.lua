@@ -11,10 +11,20 @@ local singleInputData = {
     inFocus = false,
 }
 
+local singleInputData2 = {
+    text = "222222222222",
+    inFocus = false,
+}
+
+local singleInputData3 = {
+    text = "freeeeeeeee",
+    inFocus = false,
+}
+
 function love.update (dt)
     tux.callbacks.update (dt)
 
-    tux.show.label ({colors = {1, 0, 0, 1},}, 100, 100, 250, 100)
+    tux.show.label ({text = "Hello world!", fsize = 50, colors = {1, 0, 0, 1},}, 100, 100, 250, 100)
     tux.show.label ({
         colors = {1, 0, 1, 1},
         tooltip = {
@@ -50,6 +60,10 @@ function love.update (dt)
     }, 25, 25, 50, 25)
 
     tux.show.singleInput ({data = singleInputData}, 150, 400, 200, 50)
+
+    tux.show.singleInput ({data = singleInputData2}, 150, 500, 200, 50)
+
+    tux.show.singleInput ({data = singleInputData3}, 600, 500, 200, 50)
 end
 
 function love.draw ()

@@ -41,7 +41,7 @@ function component.draw (tux, opt)
         textToShow = opt.data.text
     end
     tux.core.slice (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
-    tux.core.print (textToShow, "left", "center", opt.padding, opt.font, opt.colors, "normal", tux.core.unpackCoords (opt))
+    tux.core.print (textToShow, "left", "center", opt.padding, opt.font, opt.fsize, opt.colors, "normal", tux.core.unpackCoords (opt))
 
     -- Highlight
     if opt.highlight ~= "none" and opt.data.inFocus == true then
