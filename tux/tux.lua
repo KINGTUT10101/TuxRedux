@@ -42,7 +42,8 @@ tux = {
         font = nil,
     },
 
-    defaultFont = love.graphics.getFont (),
+    defaultFont = "default",
+    defaultFontSize = 12,
     defaultColors = {
         normal = {
             fg = {1, 1, 1, 1},
@@ -63,6 +64,7 @@ tux = {
         held = defaultSlice,
     }, -- Default slices for buttons
     fontSizeCache = {}, -- Used to save font objects for various font sizes
+    fontObjCache = {}, -- Saves the registered fonts
 
     core = {}, -- Internal functions not meant for outside use
     callbacks = {}, -- Used in LOVE2Ds callbacks to keep tux updated
@@ -116,6 +118,10 @@ function tux.core.unpackCoords (tbl)
 end
 
 function tux.core.unpackPadding (paddingTbl)
+    if paddingTbl == nil then
+        return 0, 0, 0, 0
+    end
+
     local padAll = paddingTbl.padAll or 0
 	local padX, padY = paddingTbl.padX or padAll, paddingTbl.padY or padAll
 	local padLeft, padRight = paddingTbl.padLeft or padX, paddingTbl.padRight or padX
@@ -286,41 +292,47 @@ function tux.core.debugBoundary (state, x, y, w, h)
     end
 end
 
-function tux.core.processFont (font, fsize)
-    font = font or tux.defaultFont
-    if fsize == nil then
-        return font
-    else
-        -- Check cache for font of this size
-        if tux.fontSizeCache[font] == nil or tux.fontSizeCache[font][fsize] == nil then
-            if tux.fontSizeCache[font] == nil then
-                tux.fontSizeCache[font] = {}
-            end
-            
-            -- Generate new font object and add to cache
-            love.graphics.setFont (font)
-            tux.fontSizeCache[font][fsize] = love.graphics.setNewFont (fsize)
-            return tux.fontSizeCache[font][fsize]
-        else
-            -- Use font from cache
-            love.graphics.setFont (tux.fontSizeCache[font][fsize])
-            return tux.fontSizeCache[font][fsize]
+function tux.core.processFont (fontid, fsize)
+    fontid = fontid or tux.defaultFont
+    fsize = fsize or tux.defaultFontSize
+
+    -- Check cache for font of this size
+    if tux.fontSizeCache[fontid] == nil or tux.fontSizeCache[fontid][fsize] == nil then
+        if tux.fontSizeCache[fontid] == nil then
+            tux.fontSizeCache[fontid] = {}
         end
+        
+        -- Generate new font object and add to cache
+        if fontid == "default" then
+            tux.fontSizeCache[fontid][fsize] = love.graphics.newFont (fsize)
+        else
+            tux.fontSizeCache[fontid][fsize] = love.graphics.newFont (tux.fontObjCache[fontid], fsize)
+        end
+
+        return tux.fontSizeCache[fontid][fsize]
+    else
+        -- Use font from cache
+        return tux.fontSizeCache[fontid][fsize]
     end
 end
 
+-- If a font object is provided, it will render it directly and ignore the font size
 function tux.core.setFont (font, fsize)
-    love.graphics.setFont (tux.core.processFont (font, fsize))
+    if type (font) == "userdata" then
+        love.graphics.setFont (font)
+    else
+        love.graphics.setFont (tux.core.processFont (font, fsize))
+    end
 end
 
 -- TODO: Update the padding system to use the one from the original tux
-function tux.core.print (text, align, valign, padding, font, fsize, colors, state, x, y, w, h)
+function tux.core.print (text, align, valign, padding, fontid, fsize, colors, state, x, y, w, h)
     if text ~= nil and text ~= "" then
         align = align or "center"
         valign = valign or "center"
         padding = padding or {}
 
-        tux.core.setFont (font, fsize)
+        tux.core.setFont (fontid, fsize)
         font = love.graphics.getFont ()
         
         local offsetY
@@ -359,24 +371,24 @@ end
 function tux.core.drawImage (image, iscale, align, valign, padding, x, y, w, h)
 	if image ~= nil then
 		local offsetX, offsetY
-		local padEdgeX, padEdgeY = padding.padEdgeX or 0, padding.padEdgeY or 0
+        local padLeft, padRight, padTop, padBottom = tux.core.unpackPadding (padding)
 		local iw, ih = image:getDimensions ()
 		iw = iw * (iscale or 1)
 		ih = ih * (iscale or 1)
 
 		-- Images will render on the opposite side of the text
 		if valign == "bottom" then
-			offsetY = padEdgeY
+			offsetY = padTop
 		elseif valign == "top" then
-			offsetY = h - ih - padEdgeY
+			offsetY = h - ih - padBottom
 		else
 			offsetY = h / 2 - ih / 2
 		end
 
 		if align == "right" then
-			offsetX = padEdgeX
+			offsetX = padLeft
 		elseif align == "left" then
-			offsetX = w - iw - padEdgeX
+			offsetX = w - iw - padRight
 		else
 			offsetX = w / 2 - iw / 2
 		end
@@ -439,10 +451,6 @@ function tux.core.setKeyboardFocus (state)
     if love.system.getOS () == "Android" or love.system.getOS () == "iOS" then
         love.keyboard.setTextInput (state)
     end
-end
-
-function tux.core.getFontForSize (font, size)
-
 end
 
 --[[==========
@@ -551,6 +559,23 @@ function tux.utils.registerComponent (component, override)
     end
 end
 
+function tux.utils.registerFont (id, filepath)
+    local status, font = pcall (love.graphics.newFont, filepath)
+    assert (status == true and font ~= nil, "Provided filepath does not correspond to a valid font object")
+    
+    tux.fontObjCache[id] = filepath
+end
+
+-- Overwrites an entry in the font size cache with a custom font object
+-- It does NOT create a new font with the provided size
+function tux.utils.overwriteCustomFont (id, size, font)
+    if tux.fontSizeCache[id] == nil then
+        tux.fontSizeCache[id] = {}
+    end
+
+    tux.fontSizeCache[id][size] = font
+end
+
 -- Returns true if a UI item was clicked yet in the current frame
 -- It's best to use this AFTER all of your UI items have been shown
 function tux.utils.itemClicked ()
@@ -570,6 +595,15 @@ end
 
 function tux.utils.removeAllComponents ()
     tux.comp = {}
+end
+
+function tux.utils.removeFont (id)
+    tux.fontObjCache[id] = nil
+end
+
+function tux.utils.removeAllFonts ()
+    tux.fontObjCache = {}
+
 end
 
 function tux.utils.getDefaultColors ()
@@ -596,8 +630,19 @@ function tux.utils.getDefaultFont ()
     return tux.defaultFont
 end
 
-function tux.utils.setDefaultFont (font, fsize)
-    tux.defaultFont = tux.core.processFont (font, fsize)
+function tux.utils.getDefaultFontSize ()
+    return tux.defaultFontSize
+end
+
+function tux.utils.setDefaultFont (fontid)
+    assert (tux.fontObjCache[fontid] ~= nil, "Invalid font ID")
+
+    tux.core.processFont (fontid, tux.defaultFontSize)
+    tux.defaultFont = fontid
+end
+
+function tux.utils.setDefaultFontSize (fsize)
+    tux.defaultFontSize = fsize
 end
 
 function tux.utils.clearFontCache ()
@@ -642,8 +687,8 @@ function tux.utils.setTooltip (text, align)
     end
 end
 
-function tux.utils.setTooltipFont (font, fsize)
-    tux.tooltip.font = tux.core.processFont (font, fsize)
+function tux.utils.setTooltipFont (fontid, fsize)
+    tux.tooltip.font = tux.core.processFont (fontid, fsize)
 end
 
 function tux.utils.getTooltipFont ()
