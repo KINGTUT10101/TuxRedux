@@ -1,6 +1,10 @@
 local libPath = (...) .. "." -- The path leading up to the location of the tux library
 
 -- Load tux itself
+require (libPath .. "core")
+require (libPath .. "callbacks")
+require (libPath .. "utilities")
+require (libPath .. "layout")
 local tux = require (libPath .. "tux")
 
 -- Load and register the default UI components
