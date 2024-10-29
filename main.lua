@@ -59,7 +59,7 @@ function love.update (dt)
         colors = {1, 0, 1, 1},
     }, 25, 25, 50, 25)
 
-    tux.show.singleInput ({data = singleInputData}, 150, 400, 200, 50)
+    tux.show.singleInput ({data = singleInputData, clearButton = true, defaultText = "Default AF"}, 150, 400, 200, 50)
 
     tux.show.singleInput ({data = singleInputData2}, 150, 500, 200, 50)
 

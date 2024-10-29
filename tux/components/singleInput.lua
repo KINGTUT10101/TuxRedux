@@ -5,7 +5,15 @@ local component = {
 function component.init (tux, opt)
     assert (opt.data ~= nil, "Persistent UI item was not provided with a data table")
     
-    opt.clearButton = false -- DISABLED FOR NOW
+    opt.defaultText = opt.defaultText or ""
+    if opt.clearButton == true then
+        opt.clearButtonSize = math.min (opt.w, opt.h) / 2
+
+        if tux.core.registerHitbox (opt.x + opt.w - (opt.clearButtonSize * 1.25), opt.y, opt.clearButtonSize * 1.25, opt.h) == "end" then
+            opt.data.text = opt.defaultText
+        end
+    end
+
     opt.highlight = opt.highlight or "fill" -- Options are none, fill, and line
     opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt))
 
@@ -34,14 +42,8 @@ end
 function component.draw (tux, opt)
     local textToShow
 
-    -- Text and background
-    if opt.data.text == nil or opt.data.text == "" then
-        textToShow = opt.blankText or ""
-    else
-        textToShow = opt.data.text
-    end
+    -- Background
     tux.core.slice (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
-    tux.core.print (textToShow, "left", "center", opt.padding, opt.font, opt.fsize, opt.colors, "normal", tux.core.unpackCoords (opt))
 
     -- Highlight
     if opt.highlight ~= "none" and opt.data.inFocus == true then
@@ -49,10 +51,18 @@ function component.draw (tux, opt)
         tux.core.rect (opt.highlight, tux.core.unpackCoords (opt))
     end
 
+    -- Text
+    if opt.data.text == nil or opt.data.text == "" then
+        textToShow = opt.blankText or ""
+    else
+        textToShow = opt.data.text
+    end
+    tux.core.print (textToShow, "left", "center", opt.padding, opt.font, opt.fsize, opt.colors, "normal", tux.core.unpackCoords (opt))
+
     -- Clear button
-    if opt.clearButton == true and textToShow ~= "" then
-        local size = math.min (opt.w, opt.h) / 2
-        local x, y = opt.x + opt.w - size * 1.25, opt.y + size / 2
+    if opt.clearButton == true and textToShow ~= opt.defaultText then
+        local size = opt.clearButtonSize
+        local x, y = opt.x + opt.w - (size * 1.25), opt.y + size / 2
 
         local origStyle = love.graphics.getLineStyle ()
         local origWidth = love.graphics.getLineWidth ()

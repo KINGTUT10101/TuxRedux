@@ -1,5 +1,3 @@
-local utf8 = require("utf8")
-
 local tux
 local defaultSlice = {}
 function defaultSlice:draw (x, y, w, h)
@@ -64,7 +62,7 @@ tux = {
         hover = defaultSlice,
         held = defaultSlice,
     }, -- Default slices for buttons
-    
+
     fonts = {}, -- Contains info about registered fonts and stores cached fonts for each size
     fontCacheSize = 0, -- Tracks how many font objects have been cached
     maxFontsCached = math.huge, -- Maximum limit for the number of cached fonts
