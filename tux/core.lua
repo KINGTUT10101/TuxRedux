@@ -186,22 +186,24 @@ function tux.core.processFont (fontid, fsize)
     fsize = fsize or tux.defaultFontSize
 
     -- Check cache for font of this size
-    if tux.fontSizeCache[fontid] == nil or tux.fontSizeCache[fontid][fsize] == nil then
-        if tux.fontSizeCache[fontid] == nil then
-            tux.fontSizeCache[fontid] = {}
+    if tux.fonts[fontid] == nil or tux.fonts[fontid][fsize] == nil then
+        if tux.fonts[fontid] == nil then
+            tux.fonts[fontid] = {}
         end
         
         -- Generate new font object and add to cache
         if fontid == "default" then
-            tux.fontSizeCache[fontid][fsize] = love.graphics.newFont (fsize)
+            tux.fonts[fontid][fsize] = love.graphics.newFont (fsize)
         else
-            tux.fontSizeCache[fontid][fsize] = love.graphics.newFont (tux.fontObjCache[fontid], fsize)
+            tux.fonts[fontid][fsize] = love.graphics.newFont (tux.fontObjCache[fontid], fsize)
         end
 
-        return tux.fontSizeCache[fontid][fsize]
+        tux.fontCacheSize = tux.fontCacheSize + 1
+
+        return tux.fonts[fontid][fsize]
     else
         -- Use font from cache
-        return tux.fontSizeCache[fontid][fsize]
+        return tux.fonts[fontid][fsize]
     end
 end
 

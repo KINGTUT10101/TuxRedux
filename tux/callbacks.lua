@@ -33,6 +33,11 @@ function tux.callbacks.update (dt, mx, my, isDown)
     tux.cursor.currentState = "normal"
     tux.tooltip.text = ""
     tux.tooltip.align = "auto"
+
+    -- Check if font cache should be cleared
+    if tux.fontCacheSize > tux.maxFontsCached then
+        tux.utils.clearCachedFonts ()
+    end
 end
 
 function tux.callbacks.draw ()

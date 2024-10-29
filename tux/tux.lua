@@ -63,8 +63,9 @@ tux = {
         hover = defaultSlice,
         held = defaultSlice,
     }, -- Default slices for buttons
-    fontSizeCache = {}, -- Used to save font objects for various font sizes
-    fontObjCache = {}, -- Saves the registered fonts
+    fonts = {},
+    maxFontsCached = math.huge,
+    fontCacheSize = 0,
 
     core = {}, -- Internal functions not meant for outside use
     callbacks = {}, -- Used in LOVE2Ds callbacks to keep tux updated
@@ -86,9 +87,18 @@ setmetatable (tux.show, {
     end,
 })
 
---[[==========
-    HELPERS
-============]]
+-- Sets up the font cache for the default font
+tux.fonts.default = {
+    filepath = "",
+    cache = {},
+}
+setmetatable (tux.fonts.default.cache, {
+    __index = function (self, size)
+        -- Generate new font from default LOVE2D font
+        self[size] = love.graphics.newFont (size)
 
+        return self[size]
+    end,
+})
 
 return tux

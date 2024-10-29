@@ -41,21 +41,15 @@ function tux.utils.registerComponent (component, override)
     end
 end
 
-function tux.utils.registerFont (id, filepath)
-    local status, font = pcall (love.graphics.newFont, filepath)
+function tux.utils.registerFont (id, path)
+    local status, font = pcall (love.graphics.newFont, path)
     assert (status == true and font ~= nil, "Provided filepath does not correspond to a valid font object")
-    
-    tux.fontObjCache[id] = filepath
-end
+    assert (tux.fonts[id] == nil, "Attempt to overwrite an existing font")
 
--- Overwrites an entry in the font size cache with a custom font object
--- It does NOT create a new font with the provided size
-function tux.utils.overwriteCustomFont (id, size, font)
-    if tux.fontSizeCache[id] == nil then
-        tux.fontSizeCache[id] = {}
-    end
-
-    tux.fontSizeCache[id][size] = font
+    tux.fonts[id] = {
+        path = path,
+        cache = {},
+    }
 end
 
 -- Returns true if a UI item was clicked yet in the current frame
@@ -80,11 +74,22 @@ function tux.utils.removeAllComponents ()
 end
 
 function tux.utils.removeFont (id)
-    tux.fontObjCache[id] = nil
+    assert (id ~= "default", "Attempt to remove default font")
+    assert (tux.fonts[id] ~= nil, "Attempt to remove a nonexistent font")
+
+    local fontCacheSize = 0
+    for fsize, fontObj in pairs (tux.fonts[id].cache) do
+        fontObj:release ()
+        fontCacheSize = fontCacheSize + 1
+    end
+    
+    tux.fonts[id] = nil
+
+    tux.fontCacheSize = tux.fontCacheSize - fontCacheSize
 end
 
 function tux.utils.removeAllFonts ()
-    tux.fontObjCache = {}
+    tux.fonts = {}
 
 end
 
@@ -119,7 +124,6 @@ end
 function tux.utils.setDefaultFont (fontid)
     assert (tux.fontObjCache[fontid] ~= nil, "Invalid font ID")
 
-    tux.core.processFont (fontid, tux.defaultFontSize)
     tux.defaultFont = fontid
 end
 
@@ -127,18 +131,19 @@ function tux.utils.setDefaultFontSize (fsize)
     tux.defaultFontSize = fsize
 end
 
-function tux.utils.clearFontCache ()
-    tux.fontSizeCache = {}
+function tux.utils.clearCachedFonts ()
+    for fontid, fontDef in pairs (tux.fonts) do
+        for fsize, fontObj in pairs (fontDef.cache) do
+            fontObj:release ()
+            fontDef.cache[fsize] = nil
+        end
+    end
+
+    tux.fontCacheSize = 0
 end
 
 function tux.utils.getFontCacheSize ()
-    local total = 0
-
-    for k, v in pairs (tux.fontSizeCache) do
-        total = total + 1
-    end
-
-    return total
+    return tux.fontCacheSize
 end
 
 function tux.utils.getDebugMode ()
