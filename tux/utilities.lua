@@ -175,7 +175,8 @@ function tux.utils.setTooltip (text, align)
 end
 
 function tux.utils.setTooltipFont (fontid, fsize)
-    tux.tooltip.font = tux.core.processFont (fontid, fsize)
+    tux.tooltip.fontid = fontid
+    tux.tooltip.fsize = fsize
 end
 
 function tux.utils.getTooltipFont ()

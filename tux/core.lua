@@ -125,7 +125,7 @@ function tux.core.tooltip ()
         local align = tux.tooltip.align
 		local mx, my = tux.core.getCursorPosition ()
 
-        tux.core.setFont (tux.tooltip.font)
+        tux.core.setFont (tux.tooltip.fontid, tux.tooltip.fsize)
 		local font = love.graphics.getFont ()
 		local fontH = font:getHeight ()
 		local textWidth = font:getWidth (text)

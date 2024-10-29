@@ -32,18 +32,19 @@ tux = {
         wasDown = false,
         currentState = "normal",
         lastState = "normal",
-    },
-    pressedKey = nil,
-    specialPressedKey = nil,
-    debugMode = false,
+    }, -- Tracks info about the user's cursor, which is used to determine component states
+    pressedKey = nil, -- The last pressed key
+    specialPressedKey = nil, -- The last pressed special key (like delete)
+    debugMode = false, -- If true, the library will show the special debug view
     tooltip = {
         text = "",
         align = "",
-        font = nil,
-    },
+        fontid = "default",
+        fsize = 12,
+    }, -- Tracks info about the tooltip in the current frame
 
-    defaultFont = "default",
-    defaultFontSize = 12,
+    defaultFont = "default", -- The font ID of the default font to use
+    defaultFontSize = 12, -- The default font size
     defaultColors = {
         normal = {
             fg = {1, 1, 1, 1},
@@ -63,9 +64,10 @@ tux = {
         hover = defaultSlice,
         held = defaultSlice,
     }, -- Default slices for buttons
-    fonts = {},
-    maxFontsCached = math.huge,
-    fontCacheSize = 0,
+    
+    fonts = {}, -- Contains info about registered fonts and stores cached fonts for each size
+    fontCacheSize = 0, -- Tracks how many font objects have been cached
+    maxFontsCached = math.huge, -- Maximum limit for the number of cached fonts
 
     core = {}, -- Internal functions not meant for outside use
     callbacks = {}, -- Used in LOVE2Ds callbacks to keep tux updated
