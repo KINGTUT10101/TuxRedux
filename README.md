@@ -4,6 +4,8 @@
 
 Tux Redux is an immediate-mode UI system for LOVE2D inspired by [SUIT](https://github.com/vrld/suit). It is a continuation of my original extension to SUIT called [Tux](https://github.com/KINGTUT10101/tux/tree/master).
 
+If you'd like an example of Tux Redux in action, check out my weekend game jam project, [Verify You're Human](https://github.com/KINGTUT10101/VerifyYoureHuman).
+
 ![image](https://github.com/user-attachments/assets/b011325a-9cfd-4a6d-8b05-c4199ef9fcf5)
 ```lua
 local tux = require ("tux")
@@ -86,6 +88,8 @@ end
 The following is a list of goals that I intend to fulfill with this project in the future:
 
 *   A familiar and intuitive interface inspired by SUIT
+    *   UI components can be be shown by simply executing a function
+    *   The state of the UI component is returned as a string and can be easily integrated with your existing logic
 *   Better documentation and more examples
 *   More base components
     *   Multiline text fields
