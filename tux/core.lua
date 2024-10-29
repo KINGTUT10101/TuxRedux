@@ -1,6 +1,7 @@
 local libPath = (...):match("(.+)%.[^%.]+$") .. "."
 
 local tux = require (libPath .. "tux")
+local utf8 = require("utf8")
 
 function tux.core.unpackCoords (tbl)
     return tbl.x, tbl.y, tbl.w, tbl.h
