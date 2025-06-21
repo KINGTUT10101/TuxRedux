@@ -20,6 +20,9 @@ function tux.utils.registerComponent (component, override)
             -- Update position and size
             opt.x, opt.y, opt.w, opt.h = x, y, w, h
 
+            -- Update padding
+            opt.padding = tux.core.processPadding (opt.padding)
+
             -- Initialize new UI item
             local returnVal = newComp.init (tux, opt)
 
@@ -186,4 +189,16 @@ end
 function tux.utils.setScreenSize (w, h)
     tux.screen.w = w
     tux.screen.h = h
+end
+
+function tux.utils.setMaxFontsCached (value)
+    assert (type (value) == "number", "Provided value is not a number")
+
+    tux.maxFontsCached = value
+end
+
+function tux.utils.errorForUnclearedStacks (value)
+    assert (type (value) == "boolean", "Provided value is not a boolean")
+
+    tux.errorForUnclearedStacks = value
 end

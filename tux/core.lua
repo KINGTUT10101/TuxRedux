@@ -7,17 +7,60 @@ function tux.core.unpackCoords (tbl)
     return tbl.x, tbl.y, tbl.w, tbl.h
 end
 
-function tux.core.unpackPadding (paddingTbl)
-    if paddingTbl == nil then
-        return 0, 0, 0, 0
-    end
+function tux.core.unpackPadding (processedPadding)
+    return processedPadding.left, processedPadding.right, processedPadding.top, processedPadding.bottom
+end
 
-    local padAll = paddingTbl.padAll or 0
-	local padX, padY = paddingTbl.padX or padAll, paddingTbl.padY or padAll
-	local padLeft, padRight = paddingTbl.padLeft or padX, paddingTbl.padRight or padX
-	local padTop, padBottom = paddingTbl.padTop or padY, paddingTbl.padBottom or padY
+function tux.core.unpackMargins (processedMargins)
+    return processedMargins.left, processedMargins.right, processedMargins.top, processedMargins.bottom
+end
 
-    return padLeft, padRight, padTop, padBottom
+function tux.core.applyMargins (processedMarginsTbl, x, y, w, h)
+    return
+        x - processedMarginsTbl.left,
+        y - processedMarginsTbl.top,
+        w + processedMarginsTbl.left + processedMarginsTbl.right,
+        h + processedMarginsTbl.top + processedMarginsTbl.bottom
+end
+
+function tux.core.applyPadding (processedPaddingTbl, x, y, w, h)
+    return
+        x + processedPaddingTbl.left,
+        y + processedPaddingTbl.top,
+        w - processedPaddingTbl.left - processedPaddingTbl.right,
+        h - processedPaddingTbl.top - processedPaddingTbl.bottom
+end
+
+function tux.core.processPadding (padding)
+    padding = padding or {}
+
+    local padAll = padding.all or 0
+	local padX, padY = padding.x or padAll, padding.y or padAll
+	local padLeft, padRight = padding.left or padX, padding.right or padX
+	local padTop, padBottom = padding.top or padY, padding.bottom or padY
+
+    padding.left = padLeft
+    padding.right = padRight
+    padding.top = padTop
+    padding.bottom = padBottom
+
+    return padding
+end
+
+function tux.core.processMargins (margins)
+    margins = margins or {}
+
+    local marginAll = margins.all or 0
+	local marginX, marginY = margins.x or marginAll, margins.y or marginAll
+	local marginLeft, marginRight = margins.left or marginX, margins.right or marginX
+	local marginTop, marginBottom = margins.top or marginY, margins.bottom or marginY
+
+    margins.left = marginLeft
+    margins.right = marginRight
+    margins.top = marginTop
+    margins.bottom = marginBottom
+
+    return margins
 end
 
 function tux.core.getCursorPosition ()
@@ -218,17 +261,17 @@ function tux.core.setFont (font, fsize)
 end
 
 -- TODO: Update the padding system to use the one from the original tux
-function tux.core.print (text, align, valign, padding, fontid, fsize, colors, state, x, y, w, h)
+function tux.core.print (text, align, valign, processedPadding, fontid, fsize, colors, state, x, y, w, h)
     if text ~= nil and text ~= "" then
         align = align or "center"
         valign = valign or "center"
-        padding = padding or {}
+        processedPadding = processedPadding or {}
 
         tux.core.setFont (fontid, fsize)
-        font = love.graphics.getFont ()
+        local font = love.graphics.getFont ()
         
         local offsetY
-        local padLeft, padRight, padTop, padBottom = tux.core.unpackPadding (padding)
+        local padLeft, padRight, padTop, padBottom = tux.core.unpackPadding (processedPadding)
 
         x = x + padLeft
         y = y + padTop
@@ -260,10 +303,10 @@ function tux.core.print (text, align, valign, padding, fontid, fsize, colors, st
     end
 end
 
-function tux.core.drawImage (image, iscale, align, valign, padding, x, y, w, h)
+function tux.core.drawImage (image, iscale, align, valign, processedPadding, x, y, w, h)
 	if image ~= nil then
 		local offsetX, offsetY
-        local padLeft, padRight, padTop, padBottom = tux.core.unpackPadding (padding)
+        local padLeft, padRight, padTop, padBottom = tux.core.unpackPadding (processedPadding)
 		local iw, ih = image:getDimensions ()
 		iw = iw * (iscale or 1)
 		ih = ih * (iscale or 1)
