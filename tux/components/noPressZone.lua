@@ -3,7 +3,7 @@ local component = {
 }
 
 function component.init (tux, opt)
-    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt))
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru))
 
     return opt.state
 end
