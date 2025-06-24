@@ -1,0 +1,14 @@
+{
+	"files": [
+		{
+			"path": "tux/tux.lua",
+			"bookmarks": [
+				{
+					"line": 51,
+					"column": 1,
+					"label": "Tux table"
+				}
+			]
+		}
+	]
+}

@@ -11,6 +11,8 @@ tux = {
         padding = {}, -- Current layout padding values
         grid = {}, -- Size of each cell in the current layout
         position = {}, -- Position in the grid
+        scale = 1,
+        gridStack = {},
     }, -- Contains data used by the layout system
     screen = {
         w = love.graphics.getWidth (),
@@ -66,6 +68,8 @@ tux = {
     fonts = {}, -- Contains info about registered fonts and stores cached fonts for each size
     fontCacheSize = 0, -- Tracks how many font objects have been cached
     maxFontsCached = math.huge, -- Maximum limit for the number of cached fonts
+
+    errorForUnclearedStacks = true, -- If true, the update function will cause an error if there are uncleared stacks
 
     core = {}, -- Internal functions not meant for outside use
     callbacks = {}, -- Used in LOVE2Ds callbacks to keep tux updated
