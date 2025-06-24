@@ -64,6 +64,37 @@ function love.update (dt)
     tux.show.singleInput ({data = singleInputData2}, 150, 500, 200, 50)
 
     tux.show.singleInput ({data = singleInputData3}, 600, 500, 200, 50)
+
+    tux.layout.pushGrid ({
+        margins = {
+            all = 5
+        },
+        dir = "down"
+    }, 600, 375)
+
+    tux.show.button ({
+        text = "1",
+    }, tux.layout.nextItem (nil, 25, 25))
+
+    tux.show.button ({
+        text = "2",
+    }, tux.layout.nextItem (nil, 25, 25))
+
+    tux.show.button ({
+        text = "3",
+    }, tux.layout.nextItem (nil, 25, 25))
+
+    tux.layout.nextLine ()
+
+    tux.show.button ({
+        text = "4",
+    }, tux.layout.nextItem ({margins = {top = 25, left = 0}}, 25, 50))
+
+    tux.show.button ({
+        text = "5",
+    }, tux.layout.nextItem (nil, 25, 25))
+
+    tux.layout.popGrid ()
 end
 
 function love.draw ()
