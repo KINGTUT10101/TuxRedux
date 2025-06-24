@@ -15,5 +15,6 @@ tux.utils.registerComponent (require (libPath .. "components.checkbox"), false)
 tux.utils.registerComponent (require (libPath .. "components.toggle"), false)
 tux.utils.registerComponent (require (libPath .. "components.slider"), false)
 tux.utils.registerComponent (require (libPath .. "components.singleInput"), false)
+tux.utils.registerComponent (require (libPath .. "components.debugBox"), false)
 
 return tux
