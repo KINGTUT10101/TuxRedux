@@ -3,32 +3,25 @@ local libPath = (...):match("(.+)%.[^%.]+$") .. "."
 local tux = require (libPath .. "tux")
 local utf8 = require("utf8")
 
-function tux.core.unpackCoords (tbl)
-    return tbl.x, tbl.y, tbl.w, tbl.h
+function tux.core.unpackCoords (tbl, ...)
+    return tbl.x, tbl.y, tbl.w, tbl.h, ...
 end
 
-function tux.core.unpackPadding (processedPadding)
-    return processedPadding.left, processedPadding.right, processedPadding.top, processedPadding.bottom
+function tux.core.unpackPadding (processedPadding, ...)
+    return processedPadding.left, processedPadding.right, processedPadding.top, processedPadding.bottom, ...
 end
 
-function tux.core.unpackMargins (processedMargins)
-    return processedMargins.left, processedMargins.right, processedMargins.top, processedMargins.bottom
+function tux.core.unpackMargins (processedMargins, ...)
+    return processedMargins.left, processedMargins.right, processedMargins.top, processedMargins.bottom, ...
 end
 
-function tux.core.applyMargins (processedMarginsTbl, x, y, w, h)
-    return
-        x - processedMarginsTbl.left,
-        y - processedMarginsTbl.top,
-        w + processedMarginsTbl.left + processedMarginsTbl.right,
-        h + processedMarginsTbl.top + processedMarginsTbl.bottom
-end
-
-function tux.core.applyPadding (processedPaddingTbl, x, y, w, h)
+function tux.core.applyPadding (processedPaddingTbl, x, y, w, h, ...)
     return
         x + processedPaddingTbl.left,
         y + processedPaddingTbl.top,
         w - processedPaddingTbl.left - processedPaddingTbl.right,
-        h - processedPaddingTbl.top - processedPaddingTbl.bottom
+        h - processedPaddingTbl.top - processedPaddingTbl.bottom,
+        ...
 end
 
 function tux.core.processPadding (padding)
@@ -49,7 +42,6 @@ end
 
 function tux.core.processMargins (margins)
     margins = margins or {}
-
     local marginAll = margins.all or 0
 	local marginX, marginY = margins.x or marginAll, margins.y or marginAll
 	local marginLeft, marginRight = margins.left or marginX, margins.right or marginX
@@ -91,7 +83,9 @@ function tux.core.wasDown ()
     return tux.cursor.wasDown
 end
 
-function tux.core.registerHitbox (x, y, w, h)
+function tux.core.registerHitbox (x, y, w, h, passthru)
+    passthru = passthru or false
+
     local newValue = "normal"
 
     if tux.cursor.currentState == "normal" then
@@ -119,7 +113,9 @@ function tux.core.registerHitbox (x, y, w, h)
             end
         end
 
-        tux.cursor.currentState = newValue
+        if passthru ~= true then
+            tux.cursor.currentState = newValue
+        end
     end
 
     return newValue
