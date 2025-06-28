@@ -39,7 +39,9 @@ function love.update (dt)
         print ("start")
     end
 
-    tux.show.noPressZone (nil, 550, 100, 100, 100)
+    tux.show.noPressZone ({
+        text = "You can't see me!"
+    }, 550, 100, 100, 100)
     if tux.show.button (nil, 600, 150, 100, 200) == "held" then
         print ("held")
     end
