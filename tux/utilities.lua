@@ -158,6 +158,12 @@ function tux.utils.setDebugMode (mode)
     tux.debugMode = mode
 end
 
+function tux.utils.setDebugLineWidth (value)
+    assert(type(value) == "number", "Provided debug line width is not a number value")
+    assert(value > 0, "Provided debug line width should be a positive number")
+    tux.debugLineWidth = value
+end
+
 function tux.utils.denormalize (value, min, max)
     -- TODO
     error ("Function is not yet implemented")

@@ -210,6 +210,9 @@ end
 
 function tux.core.debugBoundary (state, x, y, w, h)
     if tux.debugMode == true then
+        local origLineWidth = love.graphics.getLineWidth ()
+        love.graphics.setLineWidth(tux.debugLineWidth)
+
         if state == "normal" then
             love.graphics.setColor (1, 1, 1, 1)
         elseif state == "hover" then
@@ -218,6 +221,7 @@ function tux.core.debugBoundary (state, x, y, w, h)
             love.graphics.setColor (1, 0, 0, 1)
         end
         tux.core.rect ("line", x, y, w, h)
+        love.graphics.setLineWidth (origLineWidth)
     end
 end
 

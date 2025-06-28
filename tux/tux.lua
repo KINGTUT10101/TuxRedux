@@ -68,6 +68,7 @@ tux = {
     fonts = {}, -- Contains info about registered fonts and stores cached fonts for each size
     fontCacheSize = 0, -- Tracks how many font objects have been cached
     maxFontsCached = math.huge, -- Maximum limit for the number of cached fonts
+    debugLineWidth = 1,
 
     errorForUnclearedStacks = true, -- If true, the update function will cause an error if there are uncleared stacks
 
