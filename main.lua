@@ -71,9 +71,10 @@ function love.update (dt)
         margins = {
             all = 5
         },
-        primaryAxis = "x",
+        primaryAxis = "y",
         dir = "right",
         vdir = "down",
+        maxOverallSize = 120
     }, 600, 375)
 
     tux.show.button ({

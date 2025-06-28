@@ -39,6 +39,7 @@ function tux.layout.pushGrid (opt, x, y)
 
     opt.minLineSize = opt.minLineSize or 0
     opt.maxLineLength = opt.maxLineLength or math.huge
+    opt.maxOverallSize = opt.maxOverallSize or math.huge
 
     -- Set wrap mode
     opt.wrap = opt.wrap or false
@@ -77,6 +78,28 @@ function tux.layout.popGrid ()
     table.remove (tux.layoutData.gridStack)
 end
 
+function tux.layout.pushNestedGrid (gridOpt, itemOpt, w, h)
+    local x, y, w, h = tux.layout.nextItem (itemOpt, w, h)
+
+    if gridOpt.primaryAxis == "x" then
+        gridOpt.maxLineLength = w
+        gridOpt.maxOverallSize = h
+    else
+        gridOpt.maxLineLength = h
+        gridOpt.maxOverallSize = w
+    end
+
+    if gridOpt.dir == "left" then
+        x = x + w
+    end
+
+    if gridOpt.vdir == "up" then
+        y = y + h
+    end
+
+    tux.layout.pushGrid (gridOpt, x, y)
+end
+
 function tux.layout.nextItem(itemOpt, w, h, ...)
     itemOpt = itemOpt or {}
 
@@ -94,8 +117,26 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     local horizontal = opt.primaryAxis == "x"
 
     if horizontal == true then
-        local newx = x + fullW
+        if y + fullH - opt.starty > opt.maxOverallSize then
+            if tux.debugMode == true then
+                print("Warning: No room to add item at (" ..
+                    x .. ", " .. y .. ")" .. " to the layout starting at (" .. opt.startx .. ", " .. opt.starty .. ") due to reaching the maximum overall size")
+            end
+            return 0, 0, 0, 0
+        end
+    else
+        if x + fullW - opt.startx > opt.maxOverallSize then
+            if tux.debugMode == true then
+                print("Warning: No room to add item at (" ..
+                    x .. ", " .. y .. ")" .. " to the layout starting at (" .. opt.startx .. ", " .. opt.starty .. ") due to reaching the maximum overall size")
+            end
+            return 0, 0, 0, 0
+        end
+    end
 
+    if horizontal == true then
+        local newx = x + fullW
+        
         if newx < opt.startx + opt.maxLineLength then
             opt.x = newx
             if opt.lineSize < fullH then
