@@ -11,9 +11,11 @@ function tux.layout.popOrigin ()
 
 end
 
-local validDirs = {
+local validDirsX = {
     left = true,
     right = true,
+}
+local validDirsY = {
     up = true,
     down = true,
 }
@@ -23,6 +25,10 @@ local validAligns = {
     right = true,
     top = true,
     bottom = true,
+}
+local validAxes = {
+    x = true,
+    y = true,
 }
 function tux.layout.pushGrid (opt, x, y)
     opt = opt or {}
@@ -34,21 +40,23 @@ function tux.layout.pushGrid (opt, x, y)
     opt.minLineSize = opt.minLineSize or 0
     opt.maxLineLength = opt.maxLineLength or math.huge
 
-    -- Set default direction
-    opt.dir = opt.dir or "right"
-    assert (validDirs[opt.dir] == true, "Provided grid direction '" .. opt.dir .. "' is not valid")
-
     -- Set wrap mode
     opt.wrap = opt.wrap or false
 
+    -- Set default directions
+    opt.dir = opt.dir or "right"
+    opt.vdir = opt.vdir or "down"
+    assert(validDirsX[opt.dir] == true, "Provided grid direction '" .. opt.dir .. "' is not valid")
+    assert(validDirsY[opt.vdir] == true, "Provided grid direction '" .. opt.vdir .. "' is not valid")
+    
+    -- Major axis
+    opt.primaryAxis = opt.primaryAxis or "x"
+    assert(validAxes[opt.primaryAxis] == true, "Provided primary axis '" .. opt.primaryAxis .. "' is not valid")
+
     -- Set alignment
     opt.align = opt.align or "center"
-    assert (validAligns[opt.align] == true, "Provided alignment '" .. opt.align .. "' is not valid")
-    if opt.dir == "left" or opt.dir == "right" then
-        assert (opt.align ~= "top" or opt.align ~= "bottom", "Provided alignment is for a vertical grid, but the provided grid is horizontal")
-    else
-        assert (opt.align ~= "left" or opt.align ~= "right", "Provided alignment is for a horizontal grid, but the provided grid is vertical")
-    end
+    assert(validAligns[opt.align] == true, "Provided alignment '" .. opt.align .. "' is not valid")
+    assert ((opt.primaryAxis == "x" and opt.align ~= "left" and opt.align ~= "right") or (opt.primaryAxis == "y" and opt.align ~= "up" and opt.align ~= "down"), "Provided alignment '" .. opt.align .. "' is not valid for the selected major axis")
 
     -- Set default margins
     opt.margins = opt.margins or {}
@@ -69,20 +77,21 @@ function tux.layout.popGrid ()
     table.remove (tux.layoutData.gridStack)
 end
 
-function tux.layout.nextItem (itemOpt, w, h, ...)
+function tux.layout.nextItem(itemOpt, w, h, ...)
     itemOpt = itemOpt or {}
+
     local providedMargins = itemOpt.margins or {}
-    assert (type (providedMargins) == "table", "Attempt to use a non-table value for margins attribute")
+    assert(type(providedMargins) == "table", "Attempt to use a non-table value for margins attribute")
 
     local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
-    setDefaults (opt.margins, providedMargins)
-    providedMargins = tux.core.processMargins (providedMargins)
+    setDefaults(opt.margins, providedMargins)
+    providedMargins = tux.core.processMargins(providedMargins)
 
     local x, y = opt.x, opt.y
     local compX, compY = x + providedMargins.left, y + providedMargins.top
     local fullW, fullH = w + providedMargins.left + providedMargins.right, h + providedMargins.top + providedMargins.bottom
 
-    local horizontal = opt.dir == "left" or opt.dir == "right"
+    local horizontal = opt.primaryAxis == "x"
 
     if horizontal == true then
         local newx = x + fullW
@@ -90,16 +99,16 @@ function tux.layout.nextItem (itemOpt, w, h, ...)
         if newx < opt.startx + opt.maxLineLength then
             opt.x = newx
             if opt.lineSize < fullH then
-                opt.lineSize = math.max (opt.minLineSize, fullH)
+                opt.lineSize = math.max(opt.minLineSize, fullH)
             end
         elseif opt.wrap == true and fullW <= opt.maxLineLength then
-            tux.layout.nextLine ()
-            return tux.layout.nextItem (itemOpt, w, h)
+            tux.layout.nextLine()
+            return tux.layout.nextItem(itemOpt, w, h)
         else
             if tux.debugMode == true then
-                print ("Warning: No room to add item at (" .. x .. ", " .. y .. ")" .. " to the layout starting at (" .. opt.startx .. ", " .. opt.starty .. ")")
+                print("Warning: No room to add item at (" ..
+                x .. ", " .. y .. ")" .. " to the layout starting at (" .. opt.startx .. ", " .. opt.starty .. ")")
             end
-
             return 0, 0, 0, 0
         end
     else
@@ -108,21 +117,22 @@ function tux.layout.nextItem (itemOpt, w, h, ...)
         if newy < opt.starty + opt.maxLineLength then
             opt.y = newy
             if opt.lineSize < fullW then
-                opt.lineSize = math.max (opt.minLineSize, fullW)
+                opt.lineSize = math.max(opt.minLineSize, fullW)
             end
         elseif opt.wrap == true and fullH <= opt.maxLineLength then
-            tux.layout.nextLine ()
-            return tux.layout.nextItem (itemOpt, w, h)
+            tux.layout.nextLine()
+            return tux.layout.nextItem(itemOpt, w, h)
         else
             if tux.debugMode == true then
-                print ("Warning: No room to add item at (" .. x .. ", " .. y .. ")" .. " to the layout starting at (" .. opt.startx .. ", " .. opt.starty .. ")")
+                print("Warning: No room to add item at (" ..
+                x .. ", " .. y .. ")" .. " to the layout starting at (" .. opt.startx .. ", " .. opt.starty .. ")")
             end
-
             return 0, 0, 0, 0
         end
     end
 
     local align = itemOpt.align or opt.align
+    local origCompX, origCompY = compX, compY
     if align == "bottom" then
         compY = compY + opt.lineSize - fullH
     elseif align == "right" then
@@ -135,21 +145,47 @@ function tux.layout.nextItem (itemOpt, w, h, ...)
         end
     end
 
+    if horizontal == true then
+        fullH = math.max(fullH, opt.lineSize)
+    else
+        fullW = math.max(fullW, opt.lineSize)
+    end
+
+    if opt.dir == "left" then
+        compX = compX - (x - opt.startx) * 2 - fullW
+        origCompX = origCompX - (x - opt.startx) * 2 - fullW
+        x = origCompX - providedMargins.left
+    end
+
+    if opt.vdir == "up" then
+        compY = compY - (y - opt.starty) * 2 - fullH
+        origCompY = origCompY - (y - opt.starty) * 2 - fullH
+        y = origCompY - providedMargins.top
+    end
+
     if tux.debugMode == true then
         if horizontal == true then
-            tux.show.debugBox (nil, x, y, fullW, opt.lineSize)
+            if tux.show.debugBox(nil, x, y, fullW, opt.lineSize) == "end" then
+                if tux.debugMode == true then
+                    print (x, y, fullH, fullW)
+                end
+            end
         else
-            tux.show.debugBox (nil, x, y, opt.lineSize, fullH)
+            if tux.show.debugBox(nil, x, y, opt.lineSize, fullH) == "end" then
+                if tux.debugMode == true then
+                    print(x, y, fullH, fullW)
+                end
+            end
         end
     end
-    
+
     return compX, compY, w, h, ...
 end
 
-function tux.layout.nextLine ()
+function tux.layout.nextLine()
     local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
 
-    if opt.dir == "left" or opt.dir == "right" then
+    if opt.primaryAxis == "x" then
         opt.y = opt.y + opt.lineSize
         opt.lineSize = opt.minLineSize
         opt.x = opt.startx
