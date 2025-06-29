@@ -3,12 +3,29 @@ local libPath = (...):match("(.+)%.[^%.]+$") .. "."
 local tux = require (libPath .. "tux")
 local setDefaults = require (libPath .. "helpers.setDefaults")
 
-function tux.layout.pushOrigin (x, y, w, h)
+function tux.layout.pushOrigin (opt, x, y, w, h)
+    opt = opt or {}
+
+    local prevOrigin = tux.layoutData.originStack[#tux.layoutData.originStack]
+
+    opt.ox, opt.oy, opt.ow, opt.oh = x, y, w, h
+    opt.px, opt.py, opt.pw, opt.ph = prevOrigin.x, prevOrigin.y, prevOrigin.w, prevOrigin.h
+    opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin (opt.oalign, opt.voalign, x, y, w, h)
+
+    opt.scale = opt.scale or 1
+    opt.scale = opt.scale * prevOrigin.scale
+
+    if tux.show.debugBox(nil, x, y, w, h) == "end" then
+        print (opt.x, opt.y, opt.w, opt.h, opt.scale)
+    end
     
+    table.insert(tux.layoutData.originStack, opt)
 end
 
 function tux.layout.popOrigin ()
+    assert(#tux.layoutData.originStack > 1, "Attempt to pop from the origin stack while it was empty")
 
+    table.remove(tux.layoutData.originStack)
 end
 
 local validDirsX = {
@@ -207,18 +224,16 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     if tux.debugMode == true then
         if horizontal == true then
             if tux.show.debugBox(nil, x, y, fullW, opt.lineSize) == "end" then
-                if tux.debugMode == true then
-                    print (x, y, fullH, fullW)
-                end
+                print (x, y, fullH, fullW)
             end
         else
             if tux.show.debugBox(nil, x, y, opt.lineSize, fullH) == "end" then
-                if tux.debugMode == true then
-                    print(x, y, fullH, fullW)
-                end
+                print(x, y, fullH, fullW)
             end
         end
     end
+
+    compX, compY, w, h = tux.core.applyOrigin(compX, compY, w, h)
 
     return compX, compY, w, h, ...
 end

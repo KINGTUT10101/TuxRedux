@@ -55,6 +55,56 @@ function tux.core.processMargins (margins)
     return margins
 end
 
+-- Applies the current origin to the provided coordinates
+function tux.core.applyOrigin (oalign, voalign, x, y, w, h, opt)
+    -- Update position and size while offsetting by the current origin
+    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
+
+    opt = opt or {}
+    opt.oscale = origin.scale
+    opt.oox = origin.x
+    opt.ooy = origin.y
+    opt.oow = origin.w
+    opt.ooh = origin.h
+    opt.oosz = #tux.layoutData.originStack
+
+    -- log ("Stack size: " .. #tux.layoutData.originStack)
+    -- log("Origin x: " .. origin.x)
+    -- log("Origin y: " .. origin.y)
+    -- log("Origin w: " .. origin.w)
+    -- log("Origin h: " .. origin.h)
+    -- log ("")
+
+    local scale = origin.scale
+    x, y, w, h = x * scale, y * scale, w * scale, h * scale
+
+    -- print ("Apply origin coords: ", origin.x, origin.y, origin.w, origin.h, origin.scale)
+    -- print (x, y, w, h)
+    -- print ()
+
+    if oalign == "right" then
+        x = origin.x + origin.w - w - x
+    elseif oalign == "center" then
+        x = origin.x + origin.w * 0.5 - w * 0.5 + x
+    else
+        x = origin.x + x
+    end
+
+    if voalign == "bottom" then
+        y = origin.y + origin.h - h - y
+    elseif voalign == "center" then
+        y = origin.y + origin.h * 0.5 - h * 0.5 + y
+    else
+        y = origin.y + y
+    end
+
+    return x, y, w, h
+end
+
+function tux.core.applyAlignment ()
+    -- TODO
+end
+
 function tux.core.getCursorPosition ()
     return tux.cursor.x, tux.cursor.y
 end

@@ -7,12 +7,16 @@ end
 tux = {
     renderQueue = {}, -- Contains UI items that will be rendered in love.draw ()
     layoutData = {
-        origin = {}, -- Origin of the current layout
-        padding = {}, -- Current layout padding values
-        grid = {}, -- Size of each cell in the current layout
-        position = {}, -- Position in the grid
-        scale = 1,
         gridStack = {},
+        originStack = {
+            {
+                x = 0,
+                y = 0,
+                w = love.graphics.getWidth(),
+                h = love.graphics.getHeight(),
+                scale = 1,
+            }
+        },
     }, -- Contains data used by the layout system
     screen = {
         w = love.graphics.getWidth (),
