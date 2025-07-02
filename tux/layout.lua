@@ -4,6 +4,17 @@ local copyTable = require (libPath .. "helpers.copyTable")
 local tux = require (libPath .. "tux")
 local setDefaults = require (libPath .. "helpers.setDefaults")
 
+-- This should only be used if needed, like when you transition to another UI scene after pushing a button
+function tux.layout.clearStacks ()
+    for i = 1, #tux.layoutData.originStack do
+        tux.layoutData.originStack[i] = nil
+    end
+
+    for i = 1, #tux.layoutData.gridStack do
+        tux.layoutData.gridStack[i] = nil
+    end
+end
+
 function tux.layout.pushOrigin (opt, x, y, w, h)
     opt = copyTable (opt) or {}
 
@@ -17,13 +28,13 @@ function tux.layout.pushOrigin (opt, x, y, w, h)
         print (opt.x, opt.y, opt.w, opt.h, opt.scale)
     end
     
-    tux.layoutData.originStack[#tux.layoutData.originStack + 1] = opt
+    table.insert (tux.layoutData.originStack, opt)
 end
 
 function tux.layout.popOrigin ()
     assert(#tux.layoutData.originStack > 1, "Attempt to pop from the origin stack while it was empty")
 
-    tux.layoutData.originStack[#tux.layoutData.originStack] = nil
+    table.remove (tux.layoutData.originStack)
 end
 
 local validDirsX = {
