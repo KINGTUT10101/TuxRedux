@@ -152,7 +152,7 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     if horizontal == true then
         local newx = x + fullW
         
-        if newx < opt.startx + opt.maxLineLength then
+        if newx <= opt.startx + opt.maxLineLength then
             opt.x = newx
             if opt.lineSize < fullH then
                 opt.lineSize = math.max(opt.minLineSize, fullH)
@@ -170,7 +170,7 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     else
         local newy = y + fullH
 
-        if newy < opt.starty + opt.maxLineLength then
+        if newy <= opt.starty + opt.maxLineLength then
             opt.y = newy
             if opt.lineSize < fullW then
                 opt.lineSize = math.max(opt.minLineSize, fullW)
