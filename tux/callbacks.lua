@@ -4,15 +4,23 @@ local tux = require (libPath .. "tux")
 
 -- This should run BEFORE you show any UI items
 function tux.callbacks.update (dt, mx, my, isDown)
-    if tux.errorForUnclearedStacks == true then
-        if #tux.layoutData.gridStack ~= 0 then
-            local topmostItem = tux.layoutData.gridStack[#tux.layoutData.gridStack]
-            error ("Grid stack overflow. Found grid item started at (" .. topmostItem.startx .. ", " .. topmostItem.starty.. "). Make sure you're properly popping values from the stack.")
-        end
+    if #tux.layoutData.gridStack ~= 0 then
+        local topmostItem = tux.layoutData.gridStack[#tux.layoutData.gridStack]
 
-        if #tux.layoutData.originStack ~= 1 then
-            local topmostItem = tux.layoutData.originStack[#tux.layoutData.originStack]
+        if tux.errorForUnclearedStacks == true then
+            error ("Grid stack overflow. Found grid item started at (" .. topmostItem.startx .. ", " .. topmostItem.starty.. "). Make sure you're properly popping values from the stack.")
+        else
+            print ("Grid stack overflow. Found grid item started at (" .. topmostItem.startx .. ", " .. topmostItem.starty.. "). Make sure you're properly popping values from the stack.")
+        end
+    end
+
+    if #tux.layoutData.originStack ~= 1 then
+        local topmostItem = tux.layoutData.originStack[#tux.layoutData.originStack]
+
+        if tux.errorForUnclearedStacks == true then
             error ("Origin stack overflow. Found origin item started at (" .. topmostItem.x .. ", " .. topmostItem.y.. "). Make sure you're properly popping values from the stack.")
+        else
+            print ("Origin stack overflow. Found origin item started at (" .. topmostItem.x .. ", " .. topmostItem.y.. "). Make sure you're properly popping values from the stack.")
         end
     end
 
