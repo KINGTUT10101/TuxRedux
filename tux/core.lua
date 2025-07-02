@@ -57,30 +57,12 @@ end
 
 -- Applies the current origin to the provided coordinates
 function tux.core.applyOrigin (oalign, voalign, x, y, w, h, opt)
-    -- Update position and size while offsetting by the current origin
-    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
-
     opt = opt or {}
-    opt.oscale = origin.scale
-    opt.oox = origin.x
-    opt.ooy = origin.y
-    opt.oow = origin.w
-    opt.ooh = origin.h
-    opt.oosz = #tux.layoutData.originStack
 
-    -- log ("Stack size: " .. #tux.layoutData.originStack)
-    -- log("Origin x: " .. origin.x)
-    -- log("Origin y: " .. origin.y)
-    -- log("Origin w: " .. origin.w)
-    -- log("Origin h: " .. origin.h)
-    -- log ("")
+    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
 
     local scale = origin.scale
     x, y, w, h = x * scale, y * scale, w * scale, h * scale
-
-    -- print ("Apply origin coords: ", origin.x, origin.y, origin.w, origin.h, origin.scale)
-    -- print (x, y, w, h)
-    -- print ()
 
     if oalign == "right" then
         x = origin.x + origin.w - w - x

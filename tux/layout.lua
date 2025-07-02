@@ -1,17 +1,15 @@
 local libPath = (...):match("(.+)%.[^%.]+$") .. "."
+local copyTable = require (libPath .. "helpers.copyTable")
 
 local tux = require (libPath .. "tux")
 local setDefaults = require (libPath .. "helpers.setDefaults")
 
 function tux.layout.pushOrigin (opt, x, y, w, h)
-    opt = opt or {}
+    opt = copyTable (opt) or {}
 
     local prevOrigin = tux.layoutData.originStack[#tux.layoutData.originStack]
 
-    opt.ox, opt.oy, opt.ow, opt.oh = x, y, w, h
-    opt.px, opt.py, opt.pw, opt.ph = prevOrigin.x, prevOrigin.y, prevOrigin.w, prevOrigin.h
     opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin (opt.oalign, opt.voalign, x, y, w, h)
-
     opt.scale = opt.scale or 1
     opt.scale = opt.scale * prevOrigin.scale
 
@@ -19,13 +17,13 @@ function tux.layout.pushOrigin (opt, x, y, w, h)
         print (opt.x, opt.y, opt.w, opt.h, opt.scale)
     end
     
-    table.insert(tux.layoutData.originStack, opt)
+    tux.layoutData.originStack[#tux.layoutData.originStack + 1] = opt
 end
 
 function tux.layout.popOrigin ()
     assert(#tux.layoutData.originStack > 1, "Attempt to pop from the origin stack while it was empty")
 
-    table.remove(tux.layoutData.originStack)
+    tux.layoutData.originStack[#tux.layoutData.originStack] = nil
 end
 
 local validDirsX = {
@@ -233,7 +231,7 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
         end
     end
 
-    compX, compY, w, h = tux.core.applyOrigin(compX, compY, w, h)
+    compX, compY, w, h = tux.core.applyOrigin(opt.oalign, opt.voalign, compX, compY, w, h)
 
     return compX, compY, w, h, ...
 end
