@@ -2,6 +2,8 @@
 
 > **NOTE: This project is still in early development and is lacking documentation. It will be developed over time as I finish up Just Another Sand Game v1.0**
 
+> **WARNING: It is recommended that you use this library with LOVE2D v11.5 or newer. There is a known bug with LuaJIT in older versions of LOVE2D v11 that may break the layout system. If you want to use this library with older versions of LOVE2D v11, it is recommended that you either disable LuaJIT or avoid using the layout functions.**
+
 Tux Redux is an immediate-mode UI system for LOVE2D inspired by [SUIT](https://github.com/vrld/suit). It is a continuation of my original extension to SUIT called [Tux](https://github.com/KINGTUT10101/tux/tree/master).
 
 If you'd like an example of Tux Redux in action, check out my weekend game jam project, [Verify You're Human](https://github.com/KINGTUT10101/VerifyYoureHuman).
