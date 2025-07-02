@@ -9,7 +9,7 @@ function tux.callbacks.update (dt, mx, my, isDown)
 
         if tux.errorForUnclearedStacks == true then
             error ("Grid stack overflow. Found grid item started at (" .. topmostItem.startx .. ", " .. topmostItem.starty.. "). Make sure you're properly popping values from the stack.")
-        else
+        elseif tux.debugMode == true then
             print ("Grid stack overflow. Found grid item started at (" .. topmostItem.startx .. ", " .. topmostItem.starty.. "). Make sure you're properly popping values from the stack.")
         end
     end
@@ -19,7 +19,7 @@ function tux.callbacks.update (dt, mx, my, isDown)
 
         if tux.errorForUnclearedStacks == true then
             error ("Origin stack overflow. Found origin item started at (" .. topmostItem.x .. ", " .. topmostItem.y.. "). Make sure you're properly popping values from the stack.")
-        else
+        elseif tux.debugMode == true then
             print ("Origin stack overflow. Found origin item started at (" .. topmostItem.x .. ", " .. topmostItem.y.. "). Make sure you're properly popping values from the stack.")
         end
     end
