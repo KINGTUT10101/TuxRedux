@@ -3,32 +3,25 @@ local libPath = (...):match("(.+)%.[^%.]+$") .. "."
 local tux = require (libPath .. "tux")
 local utf8 = require("utf8")
 
-function tux.core.unpackCoords (tbl)
-    return tbl.x, tbl.y, tbl.w, tbl.h
+function tux.core.unpackCoords (tbl, ...)
+    return tbl.x, tbl.y, tbl.w, tbl.h, ...
 end
 
-function tux.core.unpackPadding (processedPadding)
-    return processedPadding.left, processedPadding.right, processedPadding.top, processedPadding.bottom
+function tux.core.unpackPadding (processedPadding, ...)
+    return processedPadding.left, processedPadding.right, processedPadding.top, processedPadding.bottom, ...
 end
 
-function tux.core.unpackMargins (processedMargins)
-    return processedMargins.left, processedMargins.right, processedMargins.top, processedMargins.bottom
+function tux.core.unpackMargins (processedMargins, ...)
+    return processedMargins.left, processedMargins.right, processedMargins.top, processedMargins.bottom, ...
 end
 
-function tux.core.applyMargins (processedMarginsTbl, x, y, w, h)
-    return
-        x - processedMarginsTbl.left,
-        y - processedMarginsTbl.top,
-        w + processedMarginsTbl.left + processedMarginsTbl.right,
-        h + processedMarginsTbl.top + processedMarginsTbl.bottom
-end
-
-function tux.core.applyPadding (processedPaddingTbl, x, y, w, h)
+function tux.core.applyPadding (processedPaddingTbl, x, y, w, h, ...)
     return
         x + processedPaddingTbl.left,
         y + processedPaddingTbl.top,
         w - processedPaddingTbl.left - processedPaddingTbl.right,
-        h - processedPaddingTbl.top - processedPaddingTbl.bottom
+        h - processedPaddingTbl.top - processedPaddingTbl.bottom,
+        ...
 end
 
 function tux.core.processPadding (padding)
@@ -49,7 +42,6 @@ end
 
 function tux.core.processMargins (margins)
     margins = margins or {}
-
     local marginAll = margins.all or 0
 	local marginX, marginY = margins.x or marginAll, margins.y or marginAll
 	local marginLeft, marginRight = margins.left or marginX, margins.right or marginX
@@ -61,6 +53,38 @@ function tux.core.processMargins (margins)
     margins.bottom = marginBottom
 
     return margins
+end
+
+-- Applies the current origin to the provided coordinates
+function tux.core.applyOrigin (oalign, voalign, x, y, w, h, opt)
+    opt = opt or {}
+
+    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
+
+    local scale = origin.scale
+    x, y, w, h = x * scale, y * scale, w * scale, h * scale
+
+    if oalign == "right" then
+        x = origin.x + origin.w - w - x
+    elseif oalign == "center" then
+        x = origin.x + origin.w * 0.5 - w * 0.5 + x
+    else
+        x = origin.x + x
+    end
+
+    if voalign == "bottom" then
+        y = origin.y + origin.h - h - y
+    elseif voalign == "center" then
+        y = origin.y + origin.h * 0.5 - h * 0.5 + y
+    else
+        y = origin.y + y
+    end
+
+    return x, y, w, h
+end
+
+function tux.core.applyAlignment ()
+    -- TODO
 end
 
 function tux.core.getCursorPosition ()
@@ -91,7 +115,9 @@ function tux.core.wasDown ()
     return tux.cursor.wasDown
 end
 
-function tux.core.registerHitbox (x, y, w, h)
+function tux.core.registerHitbox (x, y, w, h, passthru)
+    passthru = passthru or false
+
     local newValue = "normal"
 
     if tux.cursor.currentState == "normal" then
@@ -119,7 +145,9 @@ function tux.core.registerHitbox (x, y, w, h)
             end
         end
 
-        tux.cursor.currentState = newValue
+        if passthru ~= true then
+            tux.cursor.currentState = newValue
+        end
     end
 
     return newValue
@@ -214,6 +242,9 @@ end
 
 function tux.core.debugBoundary (state, x, y, w, h)
     if tux.debugMode == true then
+        local origLineWidth = love.graphics.getLineWidth ()
+        love.graphics.setLineWidth(tux.debugLineWidth)
+
         if state == "normal" then
             love.graphics.setColor (1, 1, 1, 1)
         elseif state == "hover" then
@@ -222,6 +253,7 @@ function tux.core.debugBoundary (state, x, y, w, h)
             love.graphics.setColor (1, 0, 0, 1)
         end
         tux.core.rect ("line", x, y, w, h)
+        love.graphics.setLineWidth (origLineWidth)
     end
 end
 

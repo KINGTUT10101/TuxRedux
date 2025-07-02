@@ -17,8 +17,15 @@ function tux.utils.registerComponent (component, override)
             opt = opt or {}
             assert (type (opt) == "table", "Attempt to use a non-table value for UI item options")
 
-            -- Update position and size
-            opt.x, opt.y, opt.w, opt.h = x, y, w, h
+            if opt.print == true then
+                -- PRINTVAL = { "Orig comp coords: ", x, ", ", y, ", ", w, ", ", h, ", "}
+                opt.ox, opt.oy, opt.ow, opt.oh = x, y, w, h
+            end
+            opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin (opt.oalign, opt.voalign, x, y, w, h, opt)
+
+            if tux.debugMode == true then
+                -- print(opt.x, opt.y, opt.w, opt.h)
+            end
 
             -- Update padding
             opt.padding = tux.core.processPadding (opt.padding)
@@ -158,6 +165,12 @@ function tux.utils.setDebugMode (mode)
     tux.debugMode = mode
 end
 
+function tux.utils.setDebugLineWidth (value)
+    assert(type(value) == "number", "Provided debug line width is not a number value")
+    assert(value > 0, "Provided debug line width should be a positive number")
+    tux.debugLineWidth = value
+end
+
 function tux.utils.denormalize (value, min, max)
     -- TODO
     error ("Function is not yet implemented")
@@ -186,9 +199,20 @@ function tux.utils.getTooltipFont ()
     return tux.tooltip.font
 end
 
+-- TODO: Refactor this to just use the origin functionality
 function tux.utils.setScreenSize (w, h)
     tux.screen.w = w
     tux.screen.h = h
+
+    local baseOrigin = tux.layoutData.originStack[1]
+    baseOrigin.w = w
+    baseOrigin.h = h
+end
+
+function tux.utils.setScreenScale (scale)
+    assert(type(scale) == "number", "Provided value is not a number")
+
+    tux.layoutData.originStack[1].scale = scale
 end
 
 function tux.utils.setMaxFontsCached (value)

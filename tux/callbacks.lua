@@ -4,6 +4,23 @@ local tux = require (libPath .. "tux")
 
 -- This should run BEFORE you show any UI items
 function tux.callbacks.update (dt, mx, my, isDown)
+    if tux.errorForUnclearedStacks == true then
+        if #tux.layoutData.gridStack ~= 0 then
+            local topmostItem = tux.layoutData.gridStack[#tux.layoutData.gridStack]
+            error ("Grid stack overflow. Found grid item started at (" .. topmostItem.startx .. ", " .. topmostItem.starty.. "). Make sure you're properly popping values from the stack.")
+        end
+
+        if #tux.layoutData.originStack ~= 1 then
+            local topmostItem = tux.layoutData.originStack[#tux.layoutData.originStack]
+            error ("Origin stack overflow. Found origin item started at (" .. topmostItem.x .. ", " .. topmostItem.y.. "). Make sure you're properly popping values from the stack.")
+        end
+    end
+
+    -- Check if font cache should be cleared
+    if tux.fontCacheSize > tux.maxFontsCached then
+        tux.utils.clearCachedFonts ()
+    end
+    
     tux.cursor.wasDown = tux.cursor.isDown
     tux.cursor.lastState = tux.cursor.currentState
     tux.cursor.lastX = tux.cursor.x
@@ -33,11 +50,6 @@ function tux.callbacks.update (dt, mx, my, isDown)
     tux.cursor.currentState = "normal"
     tux.tooltip.text = ""
     tux.tooltip.align = "auto"
-
-    -- Check if font cache should be cleared
-    if tux.fontCacheSize > tux.maxFontsCached then
-        tux.utils.clearCachedFonts ()
-    end
 end
 
 function tux.callbacks.draw ()

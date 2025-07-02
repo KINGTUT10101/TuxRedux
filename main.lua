@@ -39,7 +39,9 @@ function love.update (dt)
         print ("start")
     end
 
-    tux.show.noPressZone (nil, 550, 100, 100, 100)
+    tux.show.noPressZone ({
+        text = "You can't see me!"
+    }, 550, 100, 100, 100)
     if tux.show.button (nil, 600, 150, 100, 200) == "held" then
         print ("held")
     end
@@ -64,6 +66,129 @@ function love.update (dt)
     tux.show.singleInput ({data = singleInputData2}, 150, 500, 200, 50)
 
     tux.show.singleInput ({data = singleInputData3}, 600, 500, 200, 50)
+
+    tux.layout.pushGrid ({
+        margins = {
+            all = 5
+        },
+        primaryAxis = "x",
+        dir = "right",
+        vdir = "down",
+        maxOverallSize = 120
+    }, 600, 375)
+
+    tux.show.button ({
+        text = "1",
+    }, tux.layout.nextItem (nil, 25, 25))
+
+    tux.show.button ({
+        text = "2",
+    }, tux.layout.nextItem (nil, 25, 25))
+
+    tux.show.button ({
+        text = "3",
+    }, tux.layout.nextItem (nil, 25, 25))
+
+    tux.layout.nextLine ()
+
+    tux.show.button ({
+        text = "4",
+    }, tux.layout.nextItem ({margins = {top = 25, left = 0}}, 25, 50))
+
+    tux.show.button ({
+        text = "5",
+    }, tux.layout.nextItem (nil, 25, 25))
+
+    tux.layout.popGrid ()
+
+    -- tux.layout.pushOrigin ({scale = 2}, 100, 100, 500, 300)
+
+    -- if tux.show.button ({
+    --     oalign = "right",
+    --     voalign = "bottom",
+    --     text = "br"
+    -- }, 25, 25, 50, 25) == "held" then
+    --     print ("held")
+    -- end
+
+    -- tux.show.button({
+    --     oalign = "left",
+    --     voalign = "bottom",
+    --     text = "bl"
+    -- }, 25, 25, 50, 25)
+
+    -- tux.show.button({
+    --     oalign = "right",
+    --     voalign = "top",
+    --     text = "tr"
+    -- }, 25, 25, 50, 25)
+
+    -- tux.show.button({
+    --     oalign = "left",
+    --     voalign = "top",
+    --     text = "tl"
+    -- }, 25, 25, 50, 25)
+
+    -- tux.show.button({
+    --     oalign = "center",
+    --     voalign = "center",
+    --     text = "cc"
+    -- }, 0, 0, 50, 25)
+
+    -- tux.show.button({
+    --     oalign = "center",
+    --     voalign = "bottom",
+    --     text = "cb"
+    -- }, 0, 25, 50, 25)
+
+    -- tux.show.button({
+    --     oalign = "center",
+    --     voalign = "top",
+    --     text = "ct"
+    -- }, 0, 25, 50, 25)
+
+    -- tux.show.button({
+    --     oalign = "left",
+    --     voalign = "center",
+    --     text = "lc"
+    -- }, 25, 0, 50, 25)
+
+    -- tux.show.button({
+    --     oalign = "right",
+    --     voalign = "center",
+    --     text = "rc"
+    -- }, 25, 0, 50, 25)
+
+    -- tux.layout.pushOrigin({scale = 0.5}, 5, 5, 150, 75)
+
+    -- tux.show.button({
+    --     oalign = "right",
+    --     voalign = "bottom"
+    -- }, 15, 15, 60, 30)
+
+    -- tux.layout.pushOrigin({ scale = 0.5 }, 5, 5, 150, 75)
+
+    -- tux.show.button({
+    --     oalign = "left",
+    --     voalign = "bottom"
+    -- }, 15, 15, 60, 30)
+
+    -- tux.layout.popOrigin ()
+
+    -- tux.layout.popOrigin ()
+
+    -- tux.layout.pushOrigin({scale = 1}, 175, 15, 50, 50)
+
+    -- tux.show.button({
+    --     oalign = "left",
+    --     voalign = "top"
+    -- }, 5, 5, 20, 20)
+
+    -- tux.layout.popOrigin ()
+
+    -- tux.layout.popOrigin ()
+
+    -- print ()
 end
 
 function love.draw ()
@@ -76,6 +201,9 @@ function love.draw ()
 
     -- Prints the current debug mode
     love.graphics.print ("Debug: " .. tostring (tux.utils.getDebugMode ()), 700, 50)
+
+    -- Prints the FPS
+    love.graphics.print("FPS: " .. love.timer.getFPS (), 700, 75)
 end
 
 function love.textinput (text)
