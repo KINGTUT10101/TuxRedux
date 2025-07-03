@@ -335,33 +335,62 @@ function tux.core.print (text, align, valign, processedPadding, fontid, fsize, c
     end
 end
 
-function tux.core.drawImage (image, iscale, align, valign, processedPadding, x, y, w, h)
+-- Creates a scalar for the provided size based on the base size and type.
+function tux.core.getScale(size, baseSize, maxSize)
+    local scale
+
+    -- Provided size
+    if type(size) == "number" then
+        scale = size / baseSize
+
+    -- Percentage of max size
+    elseif type(size) == "string" and size:match("^%d+%%$") then
+        scale = tonumber(size:sub(1, -2)) / 100 * maxSize / baseSize
+
+    -- Provided scale
+    elseif type(size) == "string" and size:match("^%d+x$") then
+        scale = tonumber(size:sub(1, -2))
+
+    -- Default or no size provided
+    else
+        scale = 1
+    end
+
+    if baseSize * scale > maxSize then
+        scale = maxSize / baseSize
+    end
+
+    return scale
+end
+
+function tux.core.drawImage (image, align, valign, processedPadding, iw, ih, x, y, w, h)
 	if image ~= nil then
 		local offsetX, offsetY
-        local padLeft, padRight, padTop, padBottom = tux.core.unpackPadding (processedPadding)
-		local iw, ih = image:getDimensions ()
-		iw = iw * (iscale or 1)
-		ih = ih * (iscale or 1)
+		local biw, bih = image:getDimensions ()
+        x, y, w, h = tux.core.applyPadding (processedPadding, x, y, w, h)
+
+		local iwscale = tux.core.getScale (iw, biw, w)
+		local ihscale = tux.core.getScale (ih, bih, h)
 
 		-- Images will render on the opposite side of the text
 		if valign == "bottom" then
-			offsetY = padTop
+			offsetY = 0
 		elseif valign == "top" then
-			offsetY = h - ih - padBottom
+			offsetY = h - ih
 		else
 			offsetY = h / 2 - ih / 2
 		end
 
 		if align == "right" then
-			offsetX = padLeft
+			offsetX = 0
 		elseif align == "left" then
-			offsetX = w - iw - padRight
+			offsetX = w - iw
 		else
 			offsetX = w / 2 - iw / 2
 		end
 		
         love.graphics.setColor (1, 1, 1, 1)
-		love.graphics.draw (image, x + offsetX, y + offsetY, nil, iscale, iscale)
+		love.graphics.draw (image, x + offsetX, y + offsetY, nil, iwscale, ihscale)
 	end
 end
 

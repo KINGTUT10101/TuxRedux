@@ -171,9 +171,15 @@ function tux.utils.setDebugLineWidth (value)
     tux.debugLineWidth = value
 end
 
-function tux.utils.denormalize (value, min, max)
-    -- TODO
-    error ("Function is not yet implemented")
+--- Maps numbers from one scale to another.
+--- @param input number The input value to be scaled.
+--- @param inMin number The min value of the input value scale.
+--- @param inMax number The max value of the input value scale.
+--- @param outMin number The min value of the output value scale.
+--- @param outMax number The max value of the output value scale.
+--- @return number output The scaled output value.
+function tux.utils.mapToScale (input, inMin, inMax, outMin, outMax)
+    return (input - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 end
 
 function tux.utils.setTooltip (text, align)
