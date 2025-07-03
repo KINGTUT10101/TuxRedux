@@ -363,6 +363,7 @@ function tux.core.getScale(size, baseSize, maxSize)
     return scale
 end
 
+-- Supports images and tables. However, tables must support obj:getDimensions() and obj:draw(...) with the same parameters as the corresponding methods for LOVE Image objects
 function tux.core.drawImage (image, align, valign, processedPadding, iw, ih, x, y, w, h)
 	if image ~= nil then
 		local offsetX, offsetY
@@ -390,7 +391,11 @@ function tux.core.drawImage (image, align, valign, processedPadding, iw, ih, x, 
 		end
 		
         love.graphics.setColor (1, 1, 1, 1)
-		love.graphics.draw (image, x + offsetX, y + offsetY, nil, iwscale, ihscale)
+        if image.draw == nil then
+            love.graphics.draw (image, x + offsetX, y + offsetY, nil, iwscale, ihscale)
+        else
+            image:draw (x + offsetX, y + offsetY, nil, iwscale, ihscale)
+        end
 	end
 end
 
