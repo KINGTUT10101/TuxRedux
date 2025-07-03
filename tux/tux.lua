@@ -81,6 +81,7 @@ tux = {
     show = {}, -- Contains the show functions for the registered UI components
     utils = {}, -- Various utility functions useful to library users
     layout = {}, -- Layout functions for positioning UI items
+    style = {}, -- Contains functions for automatically styling UI items
 }
 
 -- Allows users to call the show functions for the components through tux.show
