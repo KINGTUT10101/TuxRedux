@@ -1,5 +1,6 @@
 local component = {
     id = "label",
+    override = false,
 }
 
 -- Handles initialization logic before a state is determined

@@ -1,5 +1,6 @@
 local component = {
     id = "noPressZone",
+    override = false,
 }
 
 function component.init (tux, opt)

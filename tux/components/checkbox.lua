@@ -1,5 +1,6 @@
 local component = {
     id = "checkbox",
+    override = false,
 }
 
 function component.init (tux, opt)

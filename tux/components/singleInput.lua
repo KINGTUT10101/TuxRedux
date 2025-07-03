@@ -1,5 +1,6 @@
 local component = {
     id = "singleInput",
+    override = false,
 }
 
 function component.init (tux, opt)

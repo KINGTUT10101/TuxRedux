@@ -1,5 +1,6 @@
 local component = {
     id = "toggle",
+    override = false,
 }
 local edgePadding = 0.05
 

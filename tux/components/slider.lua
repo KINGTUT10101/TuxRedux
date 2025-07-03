@@ -1,5 +1,6 @@
 local component = {
     id = "slider",
+    override = false,
 }
 
 function component.init (tux, opt)

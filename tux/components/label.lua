@@ -1,5 +1,6 @@
 local component = {
     id = "label",
+    override = false,
 }
 
 function component.init (tux, opt)

@@ -3,12 +3,12 @@ local libPath = (...):match("(.+)%.[^%.]+$") .. "."
 local tux = require (libPath .. "tux")
 local copyTable = require (libPath .. "helpers.copyTable")
 
-function tux.utils.registerComponent (component, override)
+function tux.utils.registerComponent (component)
     if component.id == nil then
         error ("Attempt to register a component without an ID")
     end
 
-    if tux.comp[component.id] == nil or override == true then
+    if tux.comp[component.id] == nil or component.override == true then
         -- Copy component attributes to new table
         local newComp = copyTable (component)
 

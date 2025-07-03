@@ -1,5 +1,6 @@
 local component = {
     id = "debugBox",
+    override = false,
 }
 
 function component.init(tux, opt)
