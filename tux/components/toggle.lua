@@ -7,7 +7,7 @@ local edgePadding = 0.05
 function component.init (tux, opt)
     assert (opt.data ~= nil, "Persistent UI item was not provided with a data table")
 
-    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru))
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru, opt.sounds))
 
     opt.size = math.min (opt.w / 2, opt.h)
 

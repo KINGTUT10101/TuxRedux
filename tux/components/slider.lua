@@ -8,7 +8,7 @@ function component.init (tux, opt)
 
     opt.hh = math.min (opt.w / 2, opt.h)
     opt.hw = opt.hh / 4
-    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru))
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru, opt.sounds))
 
     -- Update data value
     local edgePadding = opt.hw / 2

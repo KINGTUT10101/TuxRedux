@@ -156,6 +156,20 @@ function tux.utils.getFontCacheSize ()
     return tux.fontCacheSize
 end
 
+function tux.utils.getDefaultSounds ()
+    return {
+        start = tux.sounds.start,
+        ["end"] = tux.sounds["end"]
+    }
+end
+
+function tux.utils.setDefaultSounds (sounds)
+    assert (type (sounds) == "table", "Provided sounds argument is not a table")
+
+    tux.sounds.start = sounds.start
+    tux.sounds["end"] = sounds["end"]
+end
+
 function tux.utils.getDebugMode ()
     return tux.debugMode
 end

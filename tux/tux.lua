@@ -82,6 +82,10 @@ tux = {
     utils = {}, -- Various utility functions useful to library users
     layout = {}, -- Layout functions for positioning UI items
     style = {}, -- Contains functions for automatically styling UI items
+    sounds = {
+        start = nil,
+        ["end"]= nil,
+    }
 }
 
 -- Allows users to call the show functions for the components through tux.show

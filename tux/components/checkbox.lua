@@ -10,7 +10,7 @@ function component.init (tux, opt)
     opt.cx = opt.x + (opt.w / 2) - (opt.size / 2)
     opt.cy = opt.y + (opt.h / 2) - (opt.size / 2)
 
-    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru))
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru, opt.sounds))
 
     if opt.state == "end" then
         opt.data.checked = not opt.data.checked

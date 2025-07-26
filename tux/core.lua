@@ -115,42 +115,49 @@ function tux.core.wasDown ()
     return tux.cursor.wasDown
 end
 
-function tux.core.registerHitbox (x, y, w, h, passthru)
+function tux.core.registerHitbox (x, y, w, h, passthru, sounds)
     passthru = passthru or false
 
-    local newValue = "normal"
+    local state = "normal"
 
     if tux.cursor.currentState == "normal" then
         local mx, my = tux.cursor.lockedX, tux.cursor.lockedY
 
         -- Check if cursor is in bounds
         if x <= mx and mx <= x + w and y <= my and my <= y + h then
-            newValue = "hover"
+            state = "hover"
             
             -- Check if cursor is down
             if tux.cursor.isDown == true then
-                newValue = "held"
+                state = "held"
                 
                 if tux.cursor.wasDown == false then
-                    newValue = "start"
+                    state = "start"
                 else
-                    newValue = "held"
+                    state = "held"
                 end
             else
                 if tux.cursor.wasDown == true then
-                    newValue = "end"
+                    state = "end"
                 else
-                    newValue = "hover"
+                    state = "hover"
                 end
             end
         end
 
         if passthru ~= true then
-            tux.cursor.currentState = newValue
+            tux.cursor.currentState = state
         end
     end
 
-    return newValue
+    -- Use default sounds
+    if type (sounds) == "table" and sounds[state] ~= nil and sounds[state] ~= "none" then
+        sounds[state]:play ()
+    elseif (type (sounds) ~= "table" or sounds[state] == nil) and tux.sounds[state] ~= nil then
+        tux.sounds[state]:play ()
+    end
+
+    return state
 end
 
 -- Checks if the provided area 

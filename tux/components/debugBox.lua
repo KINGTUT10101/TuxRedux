@@ -4,7 +4,7 @@ local component = {
 }
 
 function component.init(tux, opt)
-    opt.state = tux.core.registerHitbox(tux.core.unpackCoords(opt, true))
+    opt.state = tux.core.registerHitbox(tux.core.unpackCoords(opt, true, opt.sounds))
 
     return tux.utils.getDebugMode() and opt.state or "normal"
 end

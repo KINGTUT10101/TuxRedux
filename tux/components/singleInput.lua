@@ -10,13 +10,13 @@ function component.init (tux, opt)
     if opt.clearButton == true then
         opt.clearButtonSize = math.min (opt.w, opt.h) / 2
 
-        if tux.core.registerHitbox (opt.x + opt.w - (opt.clearButtonSize * 1.25), opt.y, opt.clearButtonSize * 1.25, opt.h, opt.passthru) == "end" then
+        if tux.core.registerHitbox (opt.x + opt.w - (opt.clearButtonSize * 1.25), opt.y, opt.clearButtonSize * 1.25, opt.h, opt.passthru, opt.sounds) == "end" then
             opt.data.text = opt.defaultText
         end
     end
 
     opt.highlight = opt.highlight or "fill" -- Options are none, fill, and line
-    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru))
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru, opt.sounds))
 
     -- Check if input should be in focus
     if opt.state == "start" then

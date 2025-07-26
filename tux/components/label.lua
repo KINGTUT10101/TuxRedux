@@ -4,7 +4,7 @@ local component = {
 }
 
 function component.init (tux, opt)
-    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru))
+    opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru, opt.sounds))
 
     return opt.state
 end
