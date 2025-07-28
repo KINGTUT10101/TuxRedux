@@ -266,7 +266,12 @@ end
 
 function tux.core.processFont (fontid, fsize)
     fontid = fontid or tux.defaultFont
-    fsize = fsize or tux.defaultFontSize
+    
+    if tux.fonts[fontid] ~= nil then
+        fsize = fsize or tux.fonts[fontid].defaultSize
+    else
+        fsize = fsize or tux.defaultFontSize
+    end
 
     -- Check cache for font of this size
     if tux.fonts[fontid] == nil or tux.fonts[fontid][fsize] == nil then

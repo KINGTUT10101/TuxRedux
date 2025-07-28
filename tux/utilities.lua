@@ -51,13 +51,14 @@ function tux.utils.registerComponent (component)
     end
 end
 
-function tux.utils.registerFont (id, path)
+function tux.utils.registerFont (id, path, defaultSize)
     local status, font = pcall (love.graphics.newFont, path)
     assert (status == true and font ~= nil, "Provided filepath does not correspond to a valid font object")
     assert (tux.fonts[id] == nil, "Attempt to overwrite an existing font")
 
     tux.fonts[id] = {
         path = path,
+        defaultSize = defaultSize or tux.defaultFontSize,
         cache = {},
     }
 end
