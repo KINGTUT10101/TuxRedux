@@ -283,7 +283,7 @@ function tux.core.processFont (fontid, fsize)
         if fontid == "default" then
             tux.fonts[fontid][fsize] = love.graphics.newFont (fsize)
         else
-            tux.fonts[fontid][fsize] = love.graphics.newFont (tux.fontObjCache[fontid], fsize)
+            tux.fonts[fontid][fsize] = love.graphics.newFont (tux.fonts[fontid].path, fsize)
         end
 
         tux.fontCacheSize = tux.fontCacheSize + 1

@@ -133,7 +133,7 @@ function tux.utils.getDefaultFontSize ()
 end
 
 function tux.utils.setDefaultFont (fontid)
-    assert (tux.fontObjCache[fontid] ~= nil, "Invalid font ID")
+    assert (tux.fonts[fontid] ~= nil, "Invalid font ID")
 
     tux.defaultFont = fontid
 end
