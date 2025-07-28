@@ -95,6 +95,11 @@ function tux.layout.pushGrid(opt, x, y)
     assert(type(opt.margins) == "table", "Attempt to use a non-table value for margins attribute")
     opt.margins = tux.core.processMargins(opt.margins)
 
+    -- Set default padding
+    opt.padding = opt.padding or {}
+    assert(type(opt.padding) == "table", "Attempt to use a non-table value for padding attribute")
+    opt.padding = tux.core.processPadding(opt.padding)
+
     opt.grid = {}
     opt.lineSize = 0 -- Reset when the next line is generated and automatically sized to fit the provided components
     opt.startx = opt.x
@@ -281,7 +286,13 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
         end
     end
 
-    return compX, compY, w, h, ...
+    local providedPadding = itemOpt.padding or {}
+    assert(type(providedPadding) == "table", "Attempt to use a non-table value for padding attribute")
+
+    setDefaults(opt.padding, providedPadding)
+    providedPadding = tux.core.processPadding(providedPadding)
+
+    return tux.core.applyPadding (providedPadding, compX, compY, w, h, ...)
 end
 
 function tux.layout.nextLine()
