@@ -247,3 +247,7 @@ function tux.utils.errorForUnclearedStacks (value)
 
     tux.errorForUnclearedStacks = value
 end
+
+function tux.utils.getLastState ()
+    return tux.cursor.lastState
+end
