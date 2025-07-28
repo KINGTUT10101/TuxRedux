@@ -24,15 +24,17 @@ function tux.layout.pushOrigin(opt, x, y, w, h)
     opt.scale = opt.scale or 1
     opt.scale = opt.scale * prevOrigin.scale
 
-    if tux.show.debugBox(nil, x, y, w, h) == "end" then
-        print(opt.x, opt.y, opt.w, opt.h, opt.scale)
-    end
-
     table.insert(tux.layoutData.originStack, opt)
 end
 
 function tux.layout.popOrigin()
     assert(#tux.layoutData.originStack > 1, "Attempt to pop from the origin stack while it was empty")
+
+    local opt = tux.layoutData.originStack[#tux.layoutData.originStack]
+
+    if tux.show.debugBox(nil, opt.x, opt.y, opt.w, opt.h) == "end" then
+        print(opt.x, opt.y, opt.w, opt.h, opt.scale)
+    end
 
     table.remove(tux.layoutData.originStack)
 end
