@@ -32,11 +32,11 @@ function tux.layout.popOrigin()
 
     local opt = tux.layoutData.originStack[#tux.layoutData.originStack]
 
-    if tux.show.debugBox(nil, opt.x, opt.y, opt.w, opt.h) == "end" then
-        print(opt.x, opt.y, opt.w, opt.h, opt.scale)
-    end
-
     table.remove(tux.layoutData.originStack)
+
+    if tux.show.debugBox(nil, opt.x, opt.y, opt.w, opt.h) == "end" then
+        print("Origin: ", opt.x, opt.y, opt.w, opt.h, opt.scale)
+    end
 end
 
 local validDirsX = {
@@ -272,11 +272,11 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     if tux.debugMode == true then
         if horizontal == true then
             if tux.show.debugBox(nil, x, y, fullW, opt.lineSize) == "end" then
-                print(x, y, fullH, fullW)
+                print("Next Item: ", x, y, fullH, fullW)
             end
         else
             if tux.show.debugBox(nil, x, y, opt.lineSize, fullH) == "end" then
-                print(x, y, fullH, fullW)
+                print("Next Item: ", x, y, fullH, fullW)
             end
         end
     end
