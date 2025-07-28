@@ -16,16 +16,8 @@ function tux.utils.registerComponent (component)
         function newComp.show (opt, x, y, w, h)
             opt = opt or {}
             assert (type (opt) == "table", "Attempt to use a non-table value for UI item options")
-
-            if opt.print == true then
-                -- PRINTVAL = { "Orig comp coords: ", x, ", ", y, ", ", w, ", ", h, ", "}
-                opt.ox, opt.oy, opt.ow, opt.oh = x, y, w, h
-            end
+            
             opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin (opt.oalign, opt.voalign, x, y, w, h, opt)
-
-            if tux.debugMode == true then
-                -- print(opt.x, opt.y, opt.w, opt.h)
-            end
 
             -- Update padding
             opt.padding = tux.core.processPadding (opt.padding)
