@@ -281,8 +281,6 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
         end
     end
 
-    compX, compY, w, h = tux.core.applyOrigin(opt.oalign, opt.voalign, compX, compY, w, h)
-
     return compX, compY, w, h, ...
 end
 
