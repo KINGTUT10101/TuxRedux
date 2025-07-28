@@ -110,6 +110,7 @@ end
 
 function tux.utils.setDefaultColors (colors)
     assert (type (colors) == "table", "Attempt to use a non-table value for default colors")
+    assert (colors.normal ~= nil and colors.hover ~= nil and colors.held ~= nil, "Provided colors table does not contain all required color states")
 
     tux.defaultColors = copyTable (colors)
 end
@@ -120,6 +121,7 @@ end
 
 function tux.utils.setDefaultSlices (slices)
     assert (type (slices) == "table", "Attempt to use a non-table value for default slices")
+    assert (slices.normal ~= nil and slices.hover ~= nil and slices.held ~= nil, "Provided slices table does not contain all required slice states")
     
     tux.defaultSlices = copyTable (slices)
 end
