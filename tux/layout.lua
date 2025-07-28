@@ -132,10 +132,33 @@ end
 function tux.layout.nextItem(itemOpt, w, h, ...)
     itemOpt = itemOpt or {}
 
+    local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
+
+    -- Check if the provided width and height values are percentages
+    if type (w) == "string" then
+        local maxValue = opt.primaryAxis == "x" and opt.maxLineLength or opt.maxLineSize
+        assert (maxValue ~= math.huge, "Attempt to use a percentage width value in a grid with no max line length")
+
+        if w:sub(-1) == "%" then
+            w = tonumber(w:sub(1, -2)) / 100 * maxValue
+        else
+            error("Invalid width value: " .. w)
+        end
+    end
+    if type (h) == "string" then
+        local maxValue = opt.primaryAxis == "x" and opt.maxLineSize or opt.maxLineLength
+        assert (maxValue ~= math.huge, "Attempt to use a percentage height value in a grid with no max line size")
+
+        if h:sub(-1) == "%" then
+            h = tonumber(w:sub(1, -2)) / 100 * maxValue
+        else
+            error("Invalid height value: " .. h)
+        end
+    end
+
     local providedMargins = itemOpt.margins or {}
     assert(type(providedMargins) == "table", "Attempt to use a non-table value for margins attribute")
 
-    local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
     setDefaults(opt.margins, providedMargins)
     providedMargins = tux.core.processMargins(providedMargins)
 
