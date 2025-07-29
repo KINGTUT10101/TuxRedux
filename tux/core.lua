@@ -115,38 +115,47 @@ function tux.core.wasDown ()
     return tux.cursor.wasDown
 end
 
+function tux.core.determineState (mx, my, x, y, w, h)
+    local state = "normal"
+
+    -- Check if cursor is in bounds
+    if x <= mx and mx <= x + w and y <= my and my <= y + h then
+        state = "hover"
+        
+        -- Check if cursor is down
+        if tux.cursor.isDown == true then
+            state = "held"
+            
+            if tux.cursor.wasDown == false then
+                state = "start"
+            else
+                state = "held"
+            end
+        else
+            if tux.cursor.wasDown == true then
+                state = "end"
+            else
+                state = "hover"
+            end
+        end
+    end
+
+    return state
+end
+
 function tux.core.registerHitbox (x, y, w, h, passthru, sounds)
     passthru = passthru or false
 
     local state = "normal"
+    local actualState = "normal"
 
     if tux.cursor.currentState == "normal" then
-        local mx, my = tux.cursor.lockedX, tux.cursor.lockedY
-
-        -- Check if cursor is in bounds
-        if x <= mx and mx <= x + w and y <= my and my <= y + h then
-            state = "hover"
-            
-            -- Check if cursor is down
-            if tux.cursor.isDown == true then
-                state = "held"
-                
-                if tux.cursor.wasDown == false then
-                    state = "start"
-                else
-                    state = "held"
-                end
-            else
-                if tux.cursor.wasDown == true then
-                    state = "end"
-                else
-                    state = "hover"
-                end
-            end
-        end
+        state = tux.core.determineState (tux.cursor.lockedX, tux.cursor.lockedY, x, y, w, h)
+        actualState = tux.core.determineState (tux.cursor.x, tux.cursor.y, x, y, w, h)
 
         if passthru ~= true then
             tux.cursor.currentState = state
+            tux.cursor.currentActualState = actualState
         end
     end
 

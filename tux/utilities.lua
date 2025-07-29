@@ -16,7 +16,7 @@ function tux.utils.registerComponent (component)
         function newComp.show (opt, x, y, w, h)
             opt = opt or {}
             assert (type (opt) == "table", "Attempt to use a non-table value for UI item options")
-            
+
             opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin (opt.oalign, opt.voalign, x, y, w, h, opt)
 
             -- Update padding
@@ -252,4 +252,8 @@ end
 
 function tux.utils.getLastState ()
     return tux.cursor.lastState
+end
+
+function tux.utils.getLastActualState ()
+    return tux.cursor.lastActualState
 end

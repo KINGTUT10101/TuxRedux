@@ -31,6 +31,7 @@ function tux.callbacks.update (dt, mx, my, isDown)
     
     tux.cursor.wasDown = tux.cursor.isDown
     tux.cursor.lastState = tux.cursor.currentState
+    tux.cursor.lastActualState = tux.cursor.currentActualState
     tux.cursor.lastX = tux.cursor.x
     tux.cursor.lastY = tux.cursor.y
     tux.cursor.lastLockedX = tux.cursor.lockedX
@@ -56,6 +57,7 @@ function tux.callbacks.update (dt, mx, my, isDown)
 
     -- Reset flags
     tux.cursor.currentState = "normal"
+    tux.cursor.currentActualState = "normal"
     tux.tooltip.text = ""
     tux.tooltip.align = "auto"
 end
