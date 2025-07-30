@@ -309,6 +309,24 @@ function tux.layout.nextLine()
     end
 end
 
+function tux.layout.remainingLength ()
+    local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
+
+    local primaryUnit = (opt.primaryAxis == "x") and opt.x or opt.y
+    local primaryStart = (opt.primaryAxis == "x") and opt.startx or opt.starty
+
+    return primaryStart + opt.maxLineLength - primaryUnit
+end
+
+function tux.layout.remainingOverallSie ()
+    local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
+
+    local secondaryUnit = (opt.primaryAxis == "y") and opt.x or opt.y
+    local secondaryStart = (opt.primaryAxis == "y") and opt.startx or opt.starty
+
+    return secondaryStart + opt.maxOverallSize - secondaryUnit
+end
+
 -- Precomputes the layout of a grid and returns it as a table that can be used with the other precomp grid functions
 function tux.layout.precompGrid(opt, items)
 
