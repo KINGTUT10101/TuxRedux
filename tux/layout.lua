@@ -49,6 +49,21 @@ function tux.layout.setDefaultAlign (oalign, voalign)
     origin.defaultvoalign = voalign or origin.defaultvoalign
 end
 
+function tux.layout.getOriginWidth ()
+    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
+    return origin.w
+end
+
+function tux.layout.getOriginHeight ()
+    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
+    return origin.h
+end
+
+function tux.layout.getOriginDimensions ()
+    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
+    return origin.w, origin.h
+end
+
 local validDirsX = {
     left = true,
     right = true,
