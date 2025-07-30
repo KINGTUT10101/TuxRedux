@@ -17,7 +17,7 @@ function tux.utils.registerComponent (component)
             opt = opt or {}
             assert (type (opt) == "table", "Attempt to use a non-table value for UI item options")
 
-            opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin (opt.oalign, opt.voalign, x, y, w, h, opt)
+            opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin (opt, opt.oalign, opt.voalign, x, y, w, h)
 
             -- Update padding
             opt.padding = tux.core.processPadding (opt.padding)

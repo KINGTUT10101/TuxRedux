@@ -20,9 +20,12 @@ function tux.layout.pushOrigin(opt, x, y, w, h)
 
     local prevOrigin = tux.layoutData.originStack[#tux.layoutData.originStack]
 
-    opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin(opt.oalign, opt.voalign, x, y, w, h)
+    opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin(nil, opt.oalign, opt.voalign, x, y, w, h)
     opt.scale = opt.scale or 1
     opt.scale = opt.scale * prevOrigin.scale
+
+    opt.defaultoalign = opt.defaultoalign or "left"
+    opt.defaultvoalign = opt.defaultvoalign or "top"
 
     table.insert(tux.layoutData.originStack, opt)
 end
@@ -37,6 +40,13 @@ function tux.layout.popOrigin()
     if tux.show.debugBox(nil, opt.x, opt.y, opt.w, opt.h) == "end" then
         print("Origin: ", opt.x, opt.y, opt.w, opt.h, opt.scale)
     end
+end
+
+function tux.layout.setDefaultAlign (oalign, voalign)
+    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
+
+    origin.defaultoalign = oalign or origin.defaultoalign
+    origin.defaultvoalign = voalign or origin.defaultvoalign
 end
 
 local validDirsX = {

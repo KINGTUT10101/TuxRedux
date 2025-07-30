@@ -56,10 +56,13 @@ function tux.core.processMargins (margins)
 end
 
 -- Applies the current origin to the provided coordinates
-function tux.core.applyOrigin (oalign, voalign, x, y, w, h, opt)
+function tux.core.applyOrigin (opt, oalign, voalign, x, y, w, h)
+    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
+
+    oalign = oalign or origin.defaultoalign
+    voalign = voalign or origin.defaultvoalign
     opt = opt or {}
 
-    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
 
     local scale = origin.scale
     x, y, w, h = x * scale, y * scale, w * scale, h * scale
