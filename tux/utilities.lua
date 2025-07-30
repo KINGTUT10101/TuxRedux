@@ -79,6 +79,7 @@ end
 function tux.utils.removeFont (id)
     assert (id ~= "default", "Attempt to remove default font")
     assert (tux.fonts[id] ~= nil, "Attempt to remove a nonexistent font")
+    assert (tux.defaultFont ~= id, "Attempt to remove the current default font")
 
     local fontCacheSize = 0
     for fsize, fontObj in pairs (tux.fonts[id].cache) do
