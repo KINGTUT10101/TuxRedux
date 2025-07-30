@@ -280,6 +280,9 @@ function tux.core.processFont (fontid, fsize)
     fontid = fontid or tux.defaultFont
     
     if tux.fonts[fontid] ~= nil then
+        if tux.fonts[fontid].defaultSize == nil then
+            tux.fonts[fontid].defaultSize = tux.defaultFontSize
+        end
         fsize = fsize or tux.fonts[fontid].defaultSize
     else
         fsize = fsize or tux.defaultFontSize
