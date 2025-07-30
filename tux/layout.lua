@@ -167,7 +167,7 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
         assert (maxValue ~= math.huge, "Attempt to use a percentage height value in a grid with no max line size")
 
         if h:sub(-1) == "%" then
-            h = tonumber(w:sub(1, -2)) / 100 * maxValue
+            h = tonumber(h:sub(1, -2)) / 100 * maxValue
         else
             error("Invalid height value: " .. h)
         end
