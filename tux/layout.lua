@@ -318,7 +318,7 @@ function tux.layout.remainingLength ()
     return primaryStart + opt.maxLineLength - primaryUnit
 end
 
-function tux.layout.remainingOverallSie ()
+function tux.layout.remainingOverallSize ()
     local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
 
     local secondaryUnit = (opt.primaryAxis == "y") and opt.x or opt.y
