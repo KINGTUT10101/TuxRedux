@@ -68,7 +68,7 @@ function tux.core.applyOrigin (opt, oalign, voalign, x, y, w, h)
     x, y, w, h = x * scale, y * scale, w * scale, h * scale
 
     if oalign == "right" then
-        x = origin.x + origin.w - w - x
+        x = origin.x + origin.w + x
     elseif oalign == "center" then
         x = origin.x + origin.w * 0.5 - w * 0.5 + x
     else
@@ -76,7 +76,7 @@ function tux.core.applyOrigin (opt, oalign, voalign, x, y, w, h)
     end
 
     if voalign == "bottom" then
-        y = origin.y + origin.h - h - y
+        y = origin.y + origin.h + y
     elseif voalign == "center" then
         y = origin.y + origin.h * 0.5 - h * 0.5 + y
     else

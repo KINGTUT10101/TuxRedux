@@ -103,13 +103,13 @@ function tux.layout.pushGrid(opt, x, y)
     assert(validDirsX[opt.dir] == true, "Provided grid direction '" .. opt.dir .. "' is not valid")
     assert(validDirsY[opt.vdir] == true, "Provided grid direction '" .. opt.vdir .. "' is not valid")
 
-    local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
-    if origin.defaultoalign == "right" and opt.dir == "left" then
-        opt.dir = "right"
-    end
-    if origin.defaultvoalign == "bottom" and opt.vdir == "up" then
-        opt.vdir = "bottom"
-    end
+    -- local origin = tux.layoutData.originStack[#tux.layoutData.originStack]
+    -- if origin.defaultoalign == "right" and opt.dir == "left" then
+    --     opt.dir = "right"
+    -- end
+    -- if origin.defaultvoalign == "bottom" and opt.vdir == "up" then
+    --     opt.vdir = "bottom"
+    -- end
 
     -- Major axis
     opt.primaryAxis = opt.primaryAxis or "x"
