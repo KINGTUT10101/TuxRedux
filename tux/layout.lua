@@ -150,6 +150,7 @@ end
 function tux.layout.pushNestedGrid(gridOpt, itemOpt, w, h)
     local x, y, w, h = tux.layout.nextItem(itemOpt, w, h)
 
+    gridOpt.primaryAxis = gridOpt.primaryAxis or "x"
     if gridOpt.primaryAxis == "x" then
         gridOpt.maxLineLength = w
         gridOpt.maxOverallSize = h
@@ -370,5 +371,13 @@ function tux.layout.startPrecompGrid(grid, x, y)
 end
 
 function tux.layout.nextPrecompItem(grid)
+
+end
+
+function tux.layout.getLineWidth (opt)
+
+end
+
+function tux.layout.getLineHeight (opt)
 
 end
