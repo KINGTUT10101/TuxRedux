@@ -37,7 +37,10 @@ function tux.layout.popOrigin()
 
     table.remove(tux.layoutData.originStack)
 
-    if tux.show.debugBox(nil, opt.x, opt.y, opt.w, opt.h) == "end" then
+    if tux.show.debugBox({
+        oalign = "left",
+        voalign = "top"
+    }, opt.x, opt.y, opt.w, opt.h) == "end" then
         print("Origin: ", opt.x, opt.y, opt.w, opt.h, opt.scale)
     end
 end
