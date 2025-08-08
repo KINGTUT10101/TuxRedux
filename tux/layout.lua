@@ -175,6 +175,7 @@ end
 
 function tux.layout.nextItem(itemOpt, w, h, ...)
     itemOpt = itemOpt or {}
+    assert (type (itemOpt) == "table", "Provided item options is not a table")
 
     local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
 
