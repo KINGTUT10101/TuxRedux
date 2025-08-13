@@ -177,7 +177,14 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     itemOpt = itemOpt or {}
     assert (type (itemOpt) == "table", "Provided item options is not a table")
 
+    local test = itemOpt.test or false
+
     local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
+    local origOpt = nil
+
+    if test == true then
+        opt = copyTable (opt)
+    end
 
     -- Check if the provided width and height values are percentages
     if type (w) == "string" then
@@ -251,7 +258,7 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
                 opt.lineSize = math.max(opt.minLineSize, fullH)
             end
         elseif opt.wrap == true and fullW <= opt.maxLineLength then
-            tux.layout.nextLine()
+            tux.layout.nextLine(itemOpt)
             return tux.layout.nextItem(itemOpt, w, h)
         else
             if tux.debugMode == true then
@@ -269,7 +276,7 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
                 opt.lineSize = math.max(opt.minLineSize, fullW)
             end
         elseif opt.wrap == true and fullH <= opt.maxLineLength then
-            tux.layout.nextLine()
+            tux.layout.nextLine(itemOpt)
             return tux.layout.nextItem(itemOpt, w, h)
         else
             if tux.debugMode == true then
@@ -333,8 +340,15 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     return tux.core.applyPadding (providedPadding, compX, compY, w, h, ...)
 end
 
-function tux.layout.nextLine()
+function tux.layout.nextLine(itemOpt)
+    itemOpt = itemOpt or {}
+
+    local test = itemOpt.test or false
     local opt = tux.layoutData.gridStack[#tux.layoutData.gridStack]
+
+    if test == true then
+        opt = copyTable (opt)
+    end
 
     if opt.primaryAxis == "x" then
         opt.y = opt.y + opt.lineSize
