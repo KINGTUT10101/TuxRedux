@@ -190,7 +190,7 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     -- Check if the provided width and height values are percentages
     if type (w) == "string" then
         local maxValue = opt.primaryAxis == "x" and opt.maxLineLength or opt.maxLineSize
-        assert (maxValue ~= math.huge, "Attempt to use a percentage width value in a grid with no max line length")
+        assert (maxValue ~= math.huge and maxValue ~= nil, "Attempt to use a percentage width value in a grid with no max line length")
 
         if w:sub(-1) == "%" then
             w = tonumber(w:sub(1, -2)) / 100 * maxValue
@@ -200,7 +200,7 @@ function tux.layout.nextItem(itemOpt, w, h, ...)
     end
     if type (h) == "string" then
         local maxValue = opt.primaryAxis == "x" and opt.maxLineSize or opt.maxLineLength
-        assert (maxValue ~= math.huge, "Attempt to use a percentage height value in a grid with no max line size")
+        assert (maxValue ~= math.huge and maxValue ~= nil, "Attempt to use a percentage height value in a grid with no max line size")
 
         if h:sub(-1) == "%" then
             h = tonumber(h:sub(1, -2)) / 100 * maxValue
