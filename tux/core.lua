@@ -350,9 +350,9 @@ function tux.core.print (text, align, valign, processedPadding, fontid, fsize, c
         end
 
         if valign == "top" then
-            offsetY = padTop
+            offsetY = 0
         elseif valign == "bottom" then
-            offsetY = h - textH - padBottom
+            offsetY = h - textH
         else
             offsetY = (h - textH) / 2
         end
