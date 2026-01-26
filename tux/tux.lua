@@ -76,6 +76,8 @@ tux = {
 
     errorForUnclearedStacks = true, -- If true, the update function will cause an error if there are uncleared stacks
 
+    effects = {}, -- Contains registered effects, which are functions that are run before a UI item is shown that can modify its properties
+
     core = {}, -- Internal functions not meant for outside use
     callbacks = {}, -- Used in LOVE2Ds callbacks to keep tux updated
     show = {}, -- Contains the show functions for the registered UI components

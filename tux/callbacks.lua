@@ -68,8 +68,34 @@ function tux.callbacks.draw ()
     -- Render UI items
     local queue = tux.renderQueue
     for i = #queue, 1, -1 do
-        queue[i].draw (tux, queue[i].opt)
+        local opt = queue[i].opt
+
+        -- Run draw effects
+        for i = 1, #opt.effects do
+            local effect = opt.effects[i]
+
+            -- Effects can either be ad hoc functions or registered effect IDs
+            if tux.effects[effect] ~= nil and tux.effects[effect].draw ~= nil then
+                tux.effects[effect].draw (tux, opt)
+            elseif effect.draw ~= nil then
+                effect.draw (tux, opt)
+            end
+        end
+
+        queue[i].draw (tux, opt)
         queue[i] = nil
+
+        -- Run post draw effects
+        for i = 1, #opt.effects do
+            local effect = opt.effects[i]
+
+            -- Effects can either be ad hoc functions or registered effect IDs
+            if tux.effects[effect] ~= nil and tux.effects[effect].postDraw ~= nil then
+                tux.effects[effect].postDraw (tux, opt)
+            elseif effect.postDraw ~= nil then
+                effect.postDraw (tux, opt)
+            end
+        end
     end
 
     -- Render tooltip

@@ -22,6 +22,18 @@ function tux.utils.registerComponent (component)
             -- Update padding
             opt.padding = tux.core.processPadding (opt.padding)
 
+            -- Run effects
+            for i = 1, #opt.effects do
+                local effect = opt.effects[i]
+
+                -- Effects can either be ad hoc functions or registered effect IDs
+                if tux.effects[effect] ~= nil and tux.effects[effect].init ~= nil then
+                    tux.effects[effect].init (tux, opt)
+                elseif effect.init ~= nil then
+                    effect.init (tux, opt)
+                end
+            end
+
             -- Initialize new UI item
             local returnVal = newComp.init (tux, opt)
 
@@ -52,6 +64,14 @@ function tux.utils.registerFont (id, path, defaultSize)
         path = path,
         defaultSize = defaultSize or tux.defaultFontSize,
         cache = {},
+    }
+end
+
+function tux.utils.registerEffect (id, initEventFunc, drawEventFunc, postDrawEventFunc)
+    tux.effects[id] = {
+        init = initEventFunc,
+        draw = drawEventFunc,
+        postDraw = postDrawEventFunc,
     }
 end
 
@@ -94,7 +114,14 @@ end
 
 function tux.utils.removeAllFonts ()
     tux.fonts = {}
+end
 
+function tux.utils.removeEffect (id)
+    tux.effects[id] = nil
+end
+
+function tux.utils.removeAllEffects ()
+    tux.effects = {}
 end
 
 function tux.utils.getDefaultColors ()
