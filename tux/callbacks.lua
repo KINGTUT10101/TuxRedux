@@ -71,6 +71,7 @@ function tux.callbacks.draw ()
         local opt = queue[i].opt
 
         -- Run draw effects
+        if opt.effects ~= nil then
         for i = 1, #opt.effects do
             local effect = opt.effects[i]
 
@@ -79,6 +80,7 @@ function tux.callbacks.draw ()
                 tux.effects[effect].draw (tux, opt)
             elseif effect.draw ~= nil then
                 effect.draw (tux, opt)
+                end
             end
         end
 
@@ -86,6 +88,7 @@ function tux.callbacks.draw ()
         queue[i] = nil
 
         -- Run post draw effects
+        if opt.effects ~= nil then
         for i = 1, #opt.effects do
             local effect = opt.effects[i]
 
@@ -94,6 +97,7 @@ function tux.callbacks.draw ()
                 tux.effects[effect].postDraw (tux, opt)
             elseif effect.postDraw ~= nil then
                 effect.postDraw (tux, opt)
+                end
             end
         end
     end

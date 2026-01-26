@@ -23,14 +23,16 @@ function tux.utils.registerComponent (component)
             opt.padding = tux.core.processPadding (opt.padding)
 
             -- Run effects
-            for i = 1, #opt.effects do
-                local effect = opt.effects[i]
+            if opt.effects ~= nil then
+                for i = 1, #opt.effects do
+                    local effect = opt.effects[i]
 
-                -- Effects can either be ad hoc functions or registered effect IDs
-                if tux.effects[effect] ~= nil and tux.effects[effect].init ~= nil then
-                    tux.effects[effect].init (tux, opt)
-                elseif effect.init ~= nil then
-                    effect.init (tux, opt)
+                    -- Effects can either be ad hoc functions or registered effect IDs
+                    if tux.effects[effect] ~= nil and tux.effects[effect].init ~= nil then
+                        tux.effects[effect].init (tux, opt)
+                    elseif effect.init ~= nil then
+                        effect.init (tux, opt)
+                    end
                 end
             end
 
