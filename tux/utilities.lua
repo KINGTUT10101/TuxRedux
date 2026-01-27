@@ -37,7 +37,7 @@ function tux.utils.registerComponent (component)
             end
 
             -- Initialize new UI item
-            local returnVal = newComp.init (tux, opt)
+            local returnVal = newComp.init (opt)
 
             -- Process tooltip
             if opt.tooltip ~= nil and opt.state ~= "normal" then

@@ -1,9 +1,12 @@
+local libPath = (...):match("(.+)%.[^%.]+$"):match("(.+)%.[^%.]+$") .. "."
+local tux = require (libPath .. "tux")
+
 local component = {
     id = "singleInput",
     override = false,
 }
 
-function component.init (tux, opt)
+function component.init (opt)
     assert (opt.data ~= nil, "Persistent UI item was not provided with a data table")
     
     opt.defaultText = opt.defaultText or ""
@@ -40,7 +43,7 @@ function component.init (tux, opt)
     return opt.state -- The state will be returned by tux.show
 end
 
-function component.draw (tux, opt)
+function component.draw (opt)
     local textToShow
 
     -- Background

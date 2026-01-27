@@ -21,6 +21,10 @@ local singleInputData3 = {
     inFocus = false,
 }
 
+function love.load ()
+    tux.callbacks.load () -- MUST be called once at the start
+end
+
 function love.update (dt)
     tux.callbacks.update (dt)
 

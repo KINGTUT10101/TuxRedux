@@ -2,8 +2,30 @@ local libPath = (...):match("(.+)%.[^%.]+$") .. "."
 
 local tux = require (libPath .. "tux")
 
+local loaded = false
+
+function tux.callbacks.load ()
+    if loaded == false then
+        loaded = true
+
+        -- Load and register the default UI components
+        tux.utils.registerComponent (require (libPath .. "components.button"))
+        tux.utils.registerComponent (require (libPath .. "components.label"))
+        tux.utils.registerComponent (require (libPath .. "components.noPressZone"))
+        tux.utils.registerComponent (require (libPath .. "components.checkbox"))
+        tux.utils.registerComponent (require (libPath .. "components.toggle"))
+        tux.utils.registerComponent (require (libPath .. "components.slider"))
+        tux.utils.registerComponent (require (libPath .. "components.singleInput"))
+        tux.utils.registerComponent (require (libPath .. "components.debugBox"))
+    else
+        error ("Tux UI library has already been loaded. Make sure to only call tux.callbacks.load() once.")
+    end
+end
+
 -- This should run BEFORE you show any UI items
 function tux.callbacks.update (dt, mx, my, isDown)
+    assert (loaded == true, "Tux UI library has not been loaded yet. Make sure to call tux.callbacks.load() before calling tux.callbacks.update().")
+
     if #tux.layoutData.gridStack ~= 0 then
         local topmostItem = tux.layoutData.gridStack[#tux.layoutData.gridStack]
 
@@ -72,31 +94,31 @@ function tux.callbacks.draw ()
 
         -- Run draw effects
         if opt.effects ~= nil then
-        for i = 1, #opt.effects do
-            local effect = opt.effects[i]
+            for i = 1, #opt.effects do
+                local effect = opt.effects[i]
 
-            -- Effects can either be ad hoc functions or registered effect IDs
-            if tux.effects[effect] ~= nil and tux.effects[effect].draw ~= nil then
-                tux.effects[effect].draw (tux, opt)
-            elseif effect.draw ~= nil then
-                effect.draw (tux, opt)
+                -- Effects can either be ad hoc functions or registered effect IDs
+                if tux.effects[effect] ~= nil and tux.effects[effect].draw ~= nil then
+                    tux.effects[effect].draw (tux, opt)
+                elseif effect.draw ~= nil then
+                    effect.draw (tux, opt)
                 end
             end
         end
 
-        queue[i].draw (tux, opt)
+        queue[i].draw (opt)
         queue[i] = nil
 
         -- Run post draw effects
         if opt.effects ~= nil then
-        for i = 1, #opt.effects do
-            local effect = opt.effects[i]
+            for i = 1, #opt.effects do
+                local effect = opt.effects[i]
 
-            -- Effects can either be ad hoc functions or registered effect IDs
-            if tux.effects[effect] ~= nil and tux.effects[effect].postDraw ~= nil then
-                tux.effects[effect].postDraw (tux, opt)
-            elseif effect.postDraw ~= nil then
-                effect.postDraw (tux, opt)
+                -- Effects can either be ad hoc functions or registered effect IDs
+                if tux.effects[effect] ~= nil and tux.effects[effect].postDraw ~= nil then
+                    tux.effects[effect].postDraw (tux, opt)
+                elseif effect.postDraw ~= nil then
+                    effect.postDraw (tux, opt)
                 end
             end
         end

@@ -1,9 +1,12 @@
+local libPath = (...):match("(.+)%.[^%.]+$"):match("(.+)%.[^%.]+$") .. "."
+local tux = require (libPath .. "tux")
+
 local component = {
     id = "slider",
     override = false,
 }
 
-function component.init (tux, opt)
+function component.init (opt)
     assert (opt.data ~= nil, "Persistent UI item was not provided with a data table")
 
     opt.hh = math.min (opt.w / 2, opt.h)
@@ -25,7 +28,7 @@ function component.init (tux, opt)
     return opt.state
 end
 
-function component.draw (tux, opt)
+function component.draw (opt)
     tux.core.debugBoundary (opt.state, tux.core.unpackCoords (opt))
     
     -- Slider bar

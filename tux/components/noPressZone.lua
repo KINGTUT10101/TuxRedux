@@ -1,15 +1,18 @@
+local libPath = (...):match("(.+)%.[^%.]+$"):match("(.+)%.[^%.]+$") .. "."
+local tux = require (libPath .. "tux")
+
 local component = {
     id = "noPressZone",
     override = false,
 }
 
-function component.init (tux, opt)
+function component.init (opt)
     opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru, opt.sounds))
 
     return opt.state
 end
 
-function component.draw (tux, opt)
+function component.draw (opt)
     if tux.utils.getDebugMode () == true then
         love.graphics.setColor (0.25, 0.25, 0.25, 0.5)
         tux.core.rect ("fill", tux.core.unpackCoords (opt))

@@ -1,9 +1,12 @@
+local libPath = (...):match("(.+)%.[^%.]+$"):match("(.+)%.[^%.]+$") .. "."
+local tux = require (libPath .. "tux")
+
 local component = {
     id = "checkbox",
     override = false,
 }
 
-function component.init (tux, opt)
+function component.init (opt)
     assert (opt.data ~= nil, "Persistent UI item was not provided with a data table")
 
     opt.size = math.min (opt.w, opt.h)
@@ -19,7 +22,7 @@ function component.init (tux, opt)
     return opt.state
 end
 
-function component.draw (tux, opt)
+function component.draw (opt)
     tux.core.slice (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
 
     if opt.data.checked == true then

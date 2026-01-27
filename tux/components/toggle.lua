@@ -1,10 +1,13 @@
+local libPath = (...):match("(.+)%.[^%.]+$"):match("(.+)%.[^%.]+$") .. "."
+local tux = require (libPath .. "tux")
+
 local component = {
     id = "toggle",
     override = false,
 }
 local edgePadding = 0.05
 
-function component.init (tux, opt)
+function component.init (opt)
     assert (opt.data ~= nil, "Persistent UI item was not provided with a data table")
 
     opt.state = tux.core.registerHitbox (tux.core.unpackCoords (opt, opt.passthru, opt.sounds))
@@ -18,7 +21,7 @@ function component.init (tux, opt)
     return opt.state
 end
 
-function component.draw (tux, opt)
+function component.draw (opt)
     tux.core.debugBoundary (opt.state, tux.core.unpackCoords (opt))
 
     -- Toggle bar
