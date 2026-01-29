@@ -20,7 +20,6 @@ function tux.layout.pushOrigin(opt, x, y, w, h)
 
     local prevOrigin = tux.layoutData.originStack[#tux.layoutData.originStack]
 
-    opt.ox, opt.oy, opt.ow, opt.oh = x, y, w, h
     opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin(nil, opt.oalign, opt.voalign, x, y, w, h)
     opt.scale = opt.scale or 1
     opt.scale = opt.scale * prevOrigin.scale
@@ -41,7 +40,7 @@ function tux.layout.popOrigin()
     if tux.show.debugBox({
         oalign = "left",
         voalign = "top"
-    }, opt.ox, opt.oy, opt.ow, opt.oh) == "end" then
+    }, opt.x, opt.y, opt.w, opt.h) == "end" then
         print("Origin: ", opt.x, opt.y, opt.w, opt.h, opt.scale)
     end
 end
