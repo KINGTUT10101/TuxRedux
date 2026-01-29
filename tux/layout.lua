@@ -129,12 +129,10 @@ function tux.layout.pushGrid(opt, x, y)
     -- Set default margins
     opt.margins = opt.margins or {}
     assert(type(opt.margins) == "table", "Attempt to use a non-table value for margins attribute")
-    opt.margins = tux.core.processMargins(opt.margins)
 
     -- Set default padding
     opt.padding = opt.padding or {}
     assert(type(opt.padding) == "table", "Attempt to use a non-table value for padding attribute")
-    opt.padding = tux.core.processPadding(opt.padding)
 
     opt.grid = {}
     opt.lineSize = 0 -- Reset when the next line is generated and automatically sized to fit the provided components
