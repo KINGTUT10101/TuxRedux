@@ -17,6 +17,12 @@ function tux.utils.registerComponent (component)
             opt = opt or {}
             assert (type (opt) == "table", "Attempt to use a non-table value for UI item options")
 
+            local activeGrid = tux.layoutData.gridStack[#tux.layoutData.gridStack]
+            if activeGrid ~= nil then
+                opt.oalign = opt.oalign or activeGrid.oalign
+                opt.voalign = opt.voalign or activeGrid.voalign
+            end
+
             opt.x, opt.y, opt.w, opt.h = tux.core.applyOrigin (opt, opt.oalign, opt.voalign, x, y, w, h)
 
             -- Update padding
