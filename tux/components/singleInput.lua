@@ -9,13 +9,19 @@ local component = {
 function component.init (opt)
     assert (opt.data ~= nil, "Persistent UI item was not provided with a data table")
     
-    opt.defaultText = opt.defaultText or ""
+    opt.blankText = opt.blankText or ""
+    opt.resetText = opt.resetText or ""
+
     if opt.clearButton == true then
         opt.clearButtonSize = math.min (opt.w, opt.h) / 2
 
         if tux.core.registerHitbox (opt.x + opt.w - (opt.clearButtonSize * 1.25), opt.y, opt.clearButtonSize * 1.25, opt.h, opt.passthru, opt.sounds) == "end" then
-            opt.data.text = opt.defaultText
+            opt.data.text = opt.resetText
         end
+    end
+
+    if opt.data.text == nil then
+        opt.data.text = opt.resetText
     end
 
     opt.highlight = opt.highlight or "fill" -- Options are none, fill, and line
@@ -46,6 +52,12 @@ end
 function component.draw (opt)
     local textToShow
 
+    if opt.data.text == "" and opt.data.inFocus == false then
+        textToShow = opt.blankText
+    else
+        textToShow = opt.data.text
+    end
+
     -- Background
     tux.core.slice (opt.slices, opt.colors, opt.state, tux.core.unpackCoords (opt))
 
@@ -56,15 +68,10 @@ function component.draw (opt)
     end
 
     -- Text
-    if opt.data.text == nil or opt.data.text == "" then
-        textToShow = opt.blankText or ""
-    else
-        textToShow = opt.data.text
-    end
     tux.core.print (textToShow, "left", "center", opt.padding, opt.font, opt.fsize, opt.colors, "normal", tux.core.unpackCoords (opt))
 
     -- Clear button
-    if opt.clearButton == true and textToShow ~= opt.defaultText then
+    if opt.clearButton == true and opt.data.text ~= opt.resetText then
         local size = opt.clearButtonSize
         local x, y = opt.x + opt.w - (size * 1.25), opt.y + size / 2
 
